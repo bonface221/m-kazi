@@ -4,13 +4,13 @@ import menu from "./ussd";
 
 require("dotenv").config();
 
-const mongoString = process.env.DATABASE_URL!;
-mongoose.connect(mongoString);
-const db = mongoose.connection;
-db.on("error", (error) => console.error(error));
-db.once("connected", () => {
-  console.log("Connected to database");
-});
+// const mongoString = process.env.DATABASE_URL!;
+// mongoose.connect(mongoString);
+// const db = mongoose.connection;
+// db.on("error", (error) => console.error(error));
+// db.once("connected", () => {
+//   console.log("Connected to database");
+// });
 
 const app = express();
 app.use(express.json());

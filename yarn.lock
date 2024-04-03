@@ -634,6 +634,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.3"
     ussd-builder: "npm:^1.2.5"
+    ussd-menu-builder: "npm:^1.2.0"
   languageName: unknown
   linkType: soft
 
@@ -1075,6 +1076,15 @@ __metadata:
   dependencies:
     async: "npm:^2.6.1"
   checksum: 8853d21b3ec7e53c5032af19e166149fd1f3ab1e50db2381edb5f5368ff608740a933f24d624a43416df47719f7802f3e4f1bb9f54b94e6bf3df1658de015f1f
+  languageName: node
+  linkType: hard
+
+"ussd-menu-builder@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "ussd-menu-builder@npm:1.2.0"
+  dependencies:
+    async: "npm:^2.6.1"
+  checksum: 6035995acfb9e4821fefe88e1adfc6fe0ef92bcd2040a81ea2ae7acdb15384fef393a38b3a596ed0d394b17b08a99736de32b29e1a50c9b82faf81ce60b316db
   languageName: node
   linkType: hard
 

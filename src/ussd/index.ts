@@ -1,17 +1,14 @@
-import UssdMenu from "ussd-builder";
-
-interface NewUSSD extends UssdMenu {
-  coolThing: string;
-}
+import UssdMenu from "ussd-menu-builder";
 
 //ussd flow
 let menu = new UssdMenu({
   provider: "africasTalking",
 });
+
+// Define menu states
 menu.startState({
   run: () => {
     // use menu.con() to send response without terminating the session
-
     menu.con(
       "Welcome to the USSD app:" +
         "\n1. Laundry" +
@@ -23,7 +20,6 @@ menu.startState({
   },
 
   // next object links to next state based on user input
-
   next: {
     "1": "laundry",
     "2": "eliteCleaners",
@@ -33,6 +29,7 @@ menu.startState({
   },
 });
 
+// start of laundry services
 menu.state("laundry", {
   run: () => {
     menu.con(
@@ -46,179 +43,93 @@ menu.state("laundry", {
   },
 });
 
-// start of mama fua academy services
-menu.state("mamaFuaAcademy", {
+// start of homewash of the laundry
+menu.state("homeWash", {
   run: () => {
     menu.con(
-      "Welcome to Mama Fua Academy" +
-        "\n1. Book Training" +
-        "\n2. Sponsor a Mama Fua for training" +
-        "\n0. Back"
-    );
-  },
-  next: {
-    "1": "bookTraining.name",
-    "2": "sponsor.name",
-    "0": "__start__",
-  },
-});
-
-menu.state("sponsor.name", {
-  run: () => {
-    menu.con("Enter your name or Organization" + "\n0. Back");
-  },
-  next: {
-    "*[a-zA-Z]+": "sponsor.phone",
-    "0": "mamaFuaAcademy",
-  },
-});
-
-menu.state("sponsor.phone", {
-  run: () => {
-    menu.con("Enter your phone number" + "\n0. Back");
-  },
-  next: {
-    "*\\d+": "sponsor.disclaimer",
-    "0": "sponsor.name",
-  },
-});
-
-menu.state("sponsor.disclaimer", {
-  run: () => {
-    menu.con(
-      "The total fee is 2500, but you can contribute any amount" +
-        "\n Would you like to sponsor a Mama Fua for training?" +
-        "\n1. Yes" +
-        "\n2. No" +
-        "\n0. Back"
-    );
-  },
-  next: {
-    1: "sponsor.end",
-    2: "mamaFuaAcademy",
-    "0": "sponsor.phone",
-  },
-});
-
-menu.state("sponsor.end", {
-  run: () => {
-    menu.end("Thanks for enabling our MOTHER-STUDIES programme. GOD BLESS!");
-  },
-});
-
-menu.state("bookTraining.name", {
-  run: () => {
-    menu.con("Enter your name" + "\n0. Back");
-  },
-  next: {
-    "*[a-zA-Z]+": "bookTraining.phone",
-    "0": "mamaFuaAcademy",
-  },
-});
-
-menu.state("bookTraining.phone", {
-  run: () => {
-    menu.con("Enter your phone number" + "\n0. Back");
-  },
-  next: {
-    "*\\d+": "bookTraining.location",
-    "0": "bookTraining.name",
-  },
-});
-
-menu.state("bookTraining.location", {
-  run: () => {
-    menu.con("Enter your location" + "\n0. Back");
-  },
-  next: {
-    "*[a-zA-Z]+": "bookTraining.idNumber",
-    "0": "bookTraining.phone",
-  },
-});
-
-menu.state("bookTraining.idNumber", {
-  run: () => {
-    menu.con("Enter your ID number" + "\n0. Back");
-  },
-  next: {
-    "*\\d+": "bookTraing.disclaimer",
-    "0": "bookTraining.location",
-  },
-});
-
-menu.state("bookTraining.disclaimer", {
-  run: () => {
-    menu.con(
-      "The total fee is 2500 please pay 1000 as a deposit." +
-        " If yes press (y) press (n) to cancel (0) to go back" +
-        "\ny. Yes" +
-        "\nn. No" +
-        "\n0. Back"
-    );
-  },
-  next: {
-    y: "end",
-    n: "mamaFuaAcademy",
-    "0": "bookTraining.idNumber",
-  },
-});
-
-// start of fumigation services
-menu.state("fumigation", {
-  run: () => {
-    menu.con(
-      "Welcome to Fumigation Services" +
-        "\n1. Bedsitter @ kshs.2000" +
-        "\n2. One bedroom @ kshs. 3000" +
-        "\n3. Two bedroom @ kshs. 35000" +
-        "\n4. 3 bedroom @ kshs.4000" +
-        "\n5. 4 bedroom @ kshs.5000" +
-        "\n6. 5 bedroom @ kshs.6000" +
-        "\n7. 6 bedroom @ kshs. 6500" +
+      "Welcome to Home Wash Services" +
+        "\n Enter number of baskets" +
         "\n 0. Back"
     );
   },
   next: {
-    "1": "fumigation.phone",
-    "2": "fumigation.phone",
-    "3": "fumigation.phone",
-    "4": "fumigation.phone",
-    "5": "fumigation.phone",
-    "6": "fumigation.phone",
-    "7": "fumigation.phone",
+    "*\\d+": "homeWash.location",
     "0": "__start__",
   },
 });
 
-menu.state("fumigation.phone", {
-  run: () => {
-    menu.con("Enter your phone number" + "\n 0. Back");
-  },
-  next: {
-    "*\\d+": "fumigation.date",
-    "0": "fumigation",
-  },
-});
-
-menu.state("fumigation.date", {
+menu.state("homeWash.location", {
   run: () => {
     menu.con(
-      "Enter date for fumigation" + "\n format: dd/mm/yyyy" + "\n 0. Back"
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
     );
   },
   next: {
-    "*\\d+": "fumigation.time",
-    "0": "fumigation.phone",
+    "1": "homeWash.date",
+    "2": "homeWash.date",
+    "3": "homeWash.date",
+    "4": "homeWash.date",
+    "0": "homeWash",
   },
 });
 
-menu.state("fumigation.time", {
+menu.state("homeWash.date", {
   run: () => {
-    menu.con("Enter time for fumigation" + "\n format: hh:mm" + "\n 0. Back");
+    menu.con("Enter date for pick up" + "\n format: dd/mm/yyyy" + "\n 0. Back");
+  },
+  next: {
+    "*\\d+": "homeWash.time",
+    "0": "homeWash.location",
+  },
+});
+
+menu.state("homeWash.time", {
+  run: () => {
+    menu.con("Enter time for pick up" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
     "*\\d+": "end",
-    "0": "fumigation.date",
+    "0": "homeWash.date",
+  },
+});
+
+// start of laundromat services of the laundry
+menu.state("laundromat", {
+  run: () => {
+    menu.con(
+      "Welcome to Laundromat Services" +
+        "\n Enter Pick up location" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "*[a-zA-Z]+": "laundromat.date",
+    "0": "laundry",
+  },
+});
+
+menu.state("laundromat.date", {
+  run: () => {
+    menu.con("Enter date for pick up" + "\n format: dd/mm/yyyy" + "\n 0. Back");
+  },
+  next: {
+    "*\\d+": "laundromat.time",
+    "0": "laundromat",
+  },
+});
+
+menu.state("laundromat.time", {
+  run: () => {
+    menu.con("Enter time for pick up" + "\n format: hh:mm" + "\n 0. Back");
+  },
+  next: {
+    "*\\d+": "end",
+    "0": "laundromat.date",
   },
 });
 
@@ -244,6 +155,7 @@ menu.state("eliteCleaners", {
   },
 });
 
+// start of deep cleaning in the elite cleaners services
 menu.state("eliteCleaners.deepCleaningWashrooms", {
   run: () => {
     menu.con(
@@ -253,21 +165,23 @@ menu.state("eliteCleaners.deepCleaningWashrooms", {
     );
   },
   next: {
-    "*\\d+": "eliteCleaners.phone",
+    "*\\d+": "eliteCleaners.date",
     "0": "eliteCleaners",
   },
 });
 
+// start of seat cleaning services in the elite cleaners services
 menu.state("eliteCleaners.seatCleaning", {
   run: () => {
     menu.con("Seat cleaning services" + "\n No of seats " + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.phone",
+    "*\\d+": "eliteCleaners.date",
     "0": "eliteCleaners",
   },
 });
 
+// start of carpet cleaning services in the elite cleaners services
 menu.state("eliteCleaners.carpetCleaning", {
   run: () => {
     menu.con(
@@ -278,11 +192,12 @@ menu.state("eliteCleaners.carpetCleaning", {
     );
   },
   next: {
-    "*\\d+": "eliteCleaners.phone",
+    "*\\d+": "eliteCleaners.date",
     "0": "eliteCleaners",
   },
 });
 
+// start of deep house cleaning services in the elite cleaners services
 menu.state("eliteCleaners.deepHouseCleaning", {
   run: () => {
     menu.con(
@@ -298,28 +213,18 @@ menu.state("eliteCleaners.deepHouseCleaning", {
     );
   },
   next: {
-    // send to next state to input the phone number if the number is bettween 1-7
-    "1": "eliteCleaners.phone",
-    "2": "eliteCleaners.phone",
-    "3": "eliteCleaners.phone",
-    "4": "eliteCleaners.phone",
-    "5": "eliteCleaners.phone",
-    "6": "eliteCleaners.phone",
-    "7": "eliteCleaners.phone",
+    "1": "eliteCleaners.date",
+    "2": "eliteCleaners.date",
+    "3": "eliteCleaners.date",
+    "4": "eliteCleaners.date",
+    "5": "eliteCleaners.date",
+    "6": "eliteCleaners.date",
+    "7": "eliteCleaners.date",
     "0": "eliteCleaners",
   },
 });
 
-menu.state("eliteCleaners.phone", {
-  run: () => {
-    menu.con("Enter your phone number" + "\n 0. Back");
-  },
-  next: {
-    "*\\d+": "eliteCleaners.date",
-    "0": "eliteCleaners.deepHouseCleaning",
-  },
-});
-
+// start of date and time for the elite cleaners services
 menu.state("eliteCleaners.date", {
   run: () => {
     menu.con(
@@ -328,10 +233,11 @@ menu.state("eliteCleaners.date", {
   },
   next: {
     "*\\d+": "eliteCleaners.time",
-    "0": "eliteCleaners.phone",
+    "0": "eliteCleaners.deepHouseCleaning",
   },
 });
 
+// start of time for the elite cleaners services
 menu.state("eliteCleaners.time", {
   run: () => {
     menu.con("Enter time for cleaning" + "\n format: hh:mm" + "\n 0. Back");
@@ -342,106 +248,161 @@ menu.state("eliteCleaners.time", {
   },
 });
 
-// start of laundromat services
-menu.state("laundromat", {
+// start of fumigation services
+menu.state("fumigation", {
   run: () => {
     menu.con(
-      "Welcome to Laundromat Services" +
-        "\n Enter Pick up location" +
+      "Welcome to Fumigation Services" +
+        "\n1. Bedsitter @ kshs.2000" +
+        "\n2. One bedroom @ kshs. 3000" +
+        "\n3. Two bedroom @ kshs. 35000" +
+        "\n4. 3 bedroom @ kshs.4000" +
+        "\n5. 4 bedroom @ kshs.5000" +
+        "\n6. 5 bedroom @ kshs.6000" +
+        "\n7. 6 bedroom @ kshs. 6500" +
         "\n 0. Back"
     );
   },
   next: {
-    "*[a-zA-Z]+": "laundromat.phone",
-    "0": "laundry",
-  },
-});
-
-menu.state("laundromat.phone", {
-  run: () => {
-    menu.con("Enter your phone number" + "\n 0. Back");
-  },
-  next: {
-    "*\\d+": "laundromat.date",
-    "0": "laundromat",
-  },
-});
-
-menu.state("laundromat.date", {
-  run: () => {
-    menu.con("Enter date for pick up" + "\n format: dd/mm/yyyy" + "\n 0. Back");
-  },
-  next: {
-    "*\\d+": "laundromat.time",
-    "0": "laundromat.phone",
-  },
-});
-
-menu.state("laundromat.time", {
-  run: () => {
-    menu.con("Enter time for pick up" + "\n format: hh:mm" + "\n 0. Back");
-  },
-  next: {
-    "*\\d+": "end",
-    "0": "laundromat.date",
-  },
-});
-
-// start of homewash of the laundry
-menu.state("homeWash", {
-  run: () => {
-    menu.con(
-      "Welcome to Home Wash Services" +
-        "\n Enter number of baskets" +
-        "\n 0. Back"
-    );
-  },
-  next: {
-    "*\\d+": "homeWash.location",
+    "1": "fumigation.date",
+    "2": "fumigation.date",
+    "3": "fumigation.date",
+    "4": "fumigation.date",
+    "5": "fumigation.date",
+    "6": "fumigation.date",
+    "7": "fumigation.date",
     "0": "__start__",
   },
 });
 
-menu.state("homeWash.location", {
+// start of date for the fumigation services
+menu.state("fumigation.date", {
   run: () => {
-    menu.con("Enter your location" + "\n 0. Back");
+    menu.con(
+      "Enter date for fumigation" + "\n format: dd/mm/yyyy" + "\n 0. Back"
+    );
   },
   next: {
-    "*[a-zA-Z]+": "homeWash.phone",
-    "0": "homeWash",
+    "*\\d+": "fumigation.time",
+    "0": "fumigation",
   },
 });
 
-menu.state("homeWash.phone", {
+// start of time for the fumigation services
+menu.state("fumigation.time", {
   run: () => {
-    menu.con("Enter your phone number" + "\n 0. Back");
-  },
-  next: {
-    "*\\d+": "homeWash.date",
-    "0": "homeWash.location",
-  },
-});
-
-menu.state("homeWash.date", {
-  run: () => {
-    menu.con("Enter date for pick up" + "\n format: dd/mm/yyyy" + "\n 0. Back");
-  },
-  next: {
-    "*\\d+": "homeWash.time",
-    "0": "homeWash.phone",
-  },
-});
-
-menu.state("homeWash.time", {
-  run: () => {
-    menu.con("Enter time for pick up" + "\n format: hh:mm" + "\n 0. Back");
+    menu.con("Enter time for fumigation" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
     "*\\d+": "end",
-    "0": "homeWash.date",
+    "0": "fumigation.date",
   },
 });
 
+// start of mama fua academy services
+menu.state("mamaFuaAcademy", {
+  run: () => {
+    menu.con(
+      "Welcome to Mama Fua Academy" +
+        "\n1. Book Training" +
+        "\n2. Sponsor a Mama Fua for training" +
+        "\n0. Back"
+    );
+  },
+  next: {
+    "1": "bookTraining.name",
+    "2": "sponsor.name",
+    "0": "__start__",
+  },
+});
+
+// start of sponsor a mama fua for training
+menu.state("sponsor.name", {
+  run: () => {
+    menu.con("Enter your name or Organization" + "\n0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "sponsor.disclaimer",
+    "0": "mamaFuaAcademy",
+  },
+});
+
+menu.state("sponsor.disclaimer", {
+  run: () => {
+    menu.con(
+      "The total fee is 2500, but you can contribute any amount" +
+        "\n Would you like to sponsor a Mama Fua for training?" +
+        "\n1. Yes" +
+        "\n2. No" +
+        "\n0. Back"
+    );
+  },
+  next: {
+    1: "sponsor.end",
+    2: "mamaFuaAcademy",
+    "0": "sponsor.phone",
+  },
+});
+
+// end of the sponsor a mama fua for training
+menu.state("sponsor.end", {
+  run: () => {
+    menu.end("Thanks for enabling our MOTHER-STUDIES programme. GOD BLESS!");
+  },
+});
+
+// start of book training
+menu.state("bookTraining.name", {
+  run: () => {
+    menu.con("Enter your name" + "\n0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "bookTraining.location",
+    "0": "mamaFuaAcademy",
+  },
+});
+
+// start of book training -> users -> location
+menu.state("bookTraining.location", {
+  run: () => {
+    menu.con("Enter your location" + "\n0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "bookTraining.idNumber",
+    "0": "bookTraining.name",
+  },
+});
+
+// start of book training -> users -> location -> id number
+menu.state("bookTraining.idNumber", {
+  run: () => {
+    menu.con("Enter your ID number" + "\n0. Back");
+  },
+  next: {
+    "*\\d+": "bookTraining.disclaimer",
+    "0": "bookTraining.location",
+  },
+});
+
+// start of book training -> users -> location -> id number -> disclaimer
+menu.state("bookTraining.disclaimer", {
+  run: () => {
+    menu.con(
+      "The total fee is 2500 please pay 1000 as a deposit." +
+        "\n If yes press (y) to proceed to payment, press (n) to cancel (0) to go back" +
+        "\n1. Yes" +
+        "\n2. No" +
+        "\n0. Back"
+    );
+  },
+  next: {
+    1: "end",
+    2: "quit",
+    "0": "bookTraining.idNumber",
+  },
+});
+
+// end of the ussd flow
 menu.state("end", {
   run: async () => {
     menu.end(
@@ -449,6 +410,8 @@ menu.state("end", {
     );
   },
 });
+
+// ussd quit
 menu.state("quit", {
   run: () => {
     menu.end("Goodbye :)");
