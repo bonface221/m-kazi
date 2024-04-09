@@ -118,8 +118,38 @@ menu.state("laundromat", {
     );
   },
   next: {
-    "*[a-zA-Z]+": "laundromat.date",
+    "*[a-zA-Z]+": "laundromat.location",
     "0": "laundry",
+  },
+});
+
+menu.state("laundromat.location", {
+  run: () => {
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "1": "laundromat.moreOnLocation",
+    "2": "laundromat.moreOnLocation",
+    "3": "laundromat.moreOnLocation",
+    "4": "laundromat.moreOnLocation",
+    "0": "laundromat",
+  },
+});
+
+menu.state("laundromat.moreOnLocation", {
+  run: () => {
+    menu.con("Enter more on your location" + "\n 0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "llaundromat.date",
+    "0": "laundromat.location",
   },
 });
 
@@ -234,14 +264,33 @@ menu.state("eliteCleaners.deepHouseCleaning", {
   },
 });
 
-// start of elite cleaners location
 menu.state("eliteCleaners.location", {
   run: () => {
-    menu.con("Enter your location" + "\n 0. Back");
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "1": "eliteCleaners.moreOnLocation",
+    "2": "eliteCleaners.moreOnLocation",
+    "3": "eliteCleaners.moreOnLocation",
+    "4": "eliteCleaners.moreOnLocation",
+    "0": "eliteCleaners",
+  },
+});
+
+menu.state("eliteCleaners.moreOnLocation", {
+  run: () => {
+    menu.con("Enter more on your location" + "\n 0. Back");
   },
   next: {
     "*[a-zA-Z]+": "eliteCleaners.date",
-    "0": "eliteCleaners",
+    "0": "eliteCleaners.location",
   },
 });
 
@@ -294,14 +343,33 @@ menu.state("fumigation", {
   },
 });
 
-// start of location for the fumigation services
 menu.state("fumigation.location", {
   run: () => {
-    menu.con("Enter your location" + "\n 0. Back");
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "1": "fumigation.moreOnLocation",
+    "2": "fumigation.moreOnLocation",
+    "3": "fumigation.moreOnLocation",
+    "4": "fumigation.moreOnLocation",
+    "0": "fumigation",
+  },
+});
+
+menu.state("fumigation.moreOnLocation", {
+  run: () => {
+    menu.con("Enter more on your location" + "\n 0. Back");
   },
   next: {
     "*[a-zA-Z]+": "fumigation.date",
-    "0": "fumigation",
+    "0": "fumigation.location",
   },
 });
 
@@ -346,41 +414,6 @@ menu.state("mamaFuaAcademy", {
   },
 });
 
-// start of sponsor a mama fua for training
-menu.state("sponsor.name", {
-  run: () => {
-    menu.con("Enter your name or Organization" + "\n0. Back");
-  },
-  next: {
-    "*[a-zA-Z]+": "sponsor.disclaimer",
-    "0": "mamaFuaAcademy",
-  },
-});
-
-menu.state("sponsor.disclaimer", {
-  run: () => {
-    menu.con(
-      "The total fee is 2500, but you can contribute any amount" +
-        "\n Would you like to sponsor a Mama Fua for training?" +
-        "\n1. Yes" +
-        "\n2. No" +
-        "\n0. Back"
-    );
-  },
-  next: {
-    1: "sponsor.end",
-    2: "mamaFuaAcademy",
-    "0": "sponsor.phone",
-  },
-});
-
-// end of the sponsor a mama fua for training
-menu.state("sponsor.end", {
-  run: () => {
-    menu.end("Thanks for enabling our MOTHER-STUDIES programme. GOD BLESS!");
-  },
-});
-
 // start of book training
 menu.state("bookTraining.name", {
   run: () => {
@@ -392,14 +425,33 @@ menu.state("bookTraining.name", {
   },
 });
 
-// start of book training -> users -> location
 menu.state("bookTraining.location", {
   run: () => {
-    menu.con("Enter your location" + "\n0. Back");
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "1": "bookTraining.moreOnLocation",
+    "2": "bookTraining.moreOnLocation",
+    "3": "bookTraining.moreOnLocation",
+    "4": "bookTraining.moreOnLocation",
+    "0": "mamaFuaAcademy",
+  },
+});
+
+menu.state("bookTraining.moreOnLocation", {
+  run: () => {
+    menu.con("Enter more on your location" + "\n 0. Back");
   },
   next: {
     "*[a-zA-Z]+": "bookTraining.idNumber",
-    "0": "bookTraining.name",
+    "0": "bookTraining.location",
   },
 });
 
@@ -429,6 +481,71 @@ menu.state("bookTraining.disclaimer", {
     1: "end",
     2: "quit",
     "0": "bookTraining.idNumber",
+  },
+});
+
+// start of sponsor a mama fua for training
+menu.state("sponsor.name", {
+  run: () => {
+    menu.con("Enter your name or Organization" + "\n0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "sponsor.location",
+    "0": "mamaFuaAcademy",
+  },
+});
+
+menu.state("sponsor.location", {
+  run: () => {
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "1": "sponsor.moreOnLocation",
+    "2": "sponsor.moreOnLocation",
+    "3": "sponsor.moreOnLocation",
+    "4": "sponsor.moreOnLocation",
+    "0": "mamaFuaAcademy",
+  },
+});
+
+menu.state("sponsor.moreOnLocation", {
+  run: () => {
+    menu.con("Enter more on your location" + "\n 0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "sponsor.disclaimer",
+    "0": "sponsor.location",
+  },
+});
+
+menu.state("sponsor.disclaimer", {
+  run: () => {
+    menu.con(
+      "The total fee is 2500, but you can contribute any amount" +
+        "\n Would you like to sponsor a Mama Fua for training?" +
+        "\n1. Yes" +
+        "\n2. No" +
+        "\n0. Back"
+    );
+  },
+  next: {
+    1: "sponsor.end",
+    2: "mamaFuaAcademy",
+    "0": "sponsor.phone",
+  },
+});
+
+// end of the sponsor a mama fua for training
+menu.state("sponsor.end", {
+  run: () => {
+    menu.end("Thanks for enabling our MOTHER-STUDIES programme. GOD BLESS!");
   },
 });
 
