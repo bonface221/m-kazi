@@ -10,7 +10,7 @@ menu.startState({
   run: () => {
     // use menu.con() to send response without terminating the session
     menu.con(
-      "Welcome to the USSD app:" +
+      "Welcome to MAMA KAZI APP :" +
         "\n1. Laundry" +
         "\n2. Elite Cleaners" +
         "\n3. Fumigation" +
@@ -90,7 +90,7 @@ menu.state("homewash.moreOnLocation", {
 
 menu.state("homeWash.date", {
   run: () => {
-    menu.con("Enter date for pick up" + "\n format: dd/mm/yyyy" + "\n 0. Back");
+    menu.con("Enter date for pick up" + "\n format: DD/MM/YYY" + "\n 0. Back");
   },
   next: {
     "*\\d+": "homeWash.time",
@@ -125,7 +125,7 @@ menu.state("laundromat", {
 
 menu.state("laundromat.date", {
   run: () => {
-    menu.con("Enter date for pick up" + "\n format: dd/mm/yyyy" + "\n 0. Back");
+    menu.con("Enter date for pick up" + "\n format: DD/MM/YYY" + "\n 0. Back");
   },
   next: {
     "*\\d+": "laundromat.time",
@@ -248,9 +248,7 @@ menu.state("eliteCleaners.location", {
 // start of date and time for the elite cleaners services
 menu.state("eliteCleaners.date", {
   run: () => {
-    menu.con(
-      "Enter date for cleaning" + "\n format: dd/mm/yyyy" + "\n 0. Back"
-    );
+    menu.con("Enter date for cleaning" + "\n format: DD/MM/YYY" + "\n 0. Back");
   },
   next: {
     "*\\d+": "eliteCleaners.time",
@@ -311,7 +309,7 @@ menu.state("fumigation.location", {
 menu.state("fumigation.date", {
   run: () => {
     menu.con(
-      "Enter date for fumigation" + "\n format: dd/mm/yyyy" + "\n 0. Back"
+      "Enter date for fumigation" + "\n format: DD/MM/YYY" + "\n 0. Back"
     );
   },
   next: {
