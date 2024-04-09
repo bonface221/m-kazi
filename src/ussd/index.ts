@@ -70,11 +70,21 @@ menu.state("homeWash.location", {
     );
   },
   next: {
-    "1": "homeWash.date",
-    "2": "homeWash.date",
-    "3": "homeWash.date",
-    "4": "homeWash.date",
+    "1": "homewash.moreOnLocation",
+    "2": "homewash.moreOnLocation",
+    "3": "homewash.moreOnLocation",
+    "4": "homewash.moreOnLocation",
     "0": "homeWash",
+  },
+});
+
+menu.state("homewash.moreOnLocation", {
+  run: () => {
+    menu.con("Enter more on your location" + "\n 0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "homeWash.date",
+    "0": "homeWash.location",
   },
 });
 
@@ -165,7 +175,7 @@ menu.state("eliteCleaners.deepCleaningWashrooms", {
     );
   },
   next: {
-    "*\\d+": "eliteCleaners.date",
+    "*\\d+": "eliteCleaners.location",
     "0": "eliteCleaners",
   },
 });
@@ -176,7 +186,7 @@ menu.state("eliteCleaners.seatCleaning", {
     menu.con("Seat cleaning services" + "\n No of seats " + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.date",
+    "*\\d+": "eliteCleaners.location",
     "0": "eliteCleaners",
   },
 });
@@ -192,7 +202,7 @@ menu.state("eliteCleaners.carpetCleaning", {
     );
   },
   next: {
-    "*\\d+": "eliteCleaners.date",
+    "*\\d+": "eliteCleaners.location",
     "0": "eliteCleaners",
   },
 });
@@ -213,13 +223,24 @@ menu.state("eliteCleaners.deepHouseCleaning", {
     );
   },
   next: {
-    "1": "eliteCleaners.date",
-    "2": "eliteCleaners.date",
-    "3": "eliteCleaners.date",
-    "4": "eliteCleaners.date",
-    "5": "eliteCleaners.date",
-    "6": "eliteCleaners.date",
-    "7": "eliteCleaners.date",
+    "1": "eliteCleaners.location",
+    "2": "eliteCleaners.location",
+    "3": "eliteCleaners.location",
+    "4": "eliteCleaners.location",
+    "5": "eliteCleaners.location",
+    "6": "eliteCleaners.location",
+    "7": "eliteCleaners.location",
+    "0": "eliteCleaners",
+  },
+});
+
+// start of elite cleaners location
+menu.state("eliteCleaners.location", {
+  run: () => {
+    menu.con("Enter your location" + "\n 0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "eliteCleaners.date",
     "0": "eliteCleaners",
   },
 });
@@ -264,14 +285,25 @@ menu.state("fumigation", {
     );
   },
   next: {
-    "1": "fumigation.date",
-    "2": "fumigation.date",
-    "3": "fumigation.date",
-    "4": "fumigation.date",
-    "5": "fumigation.date",
-    "6": "fumigation.date",
-    "7": "fumigation.date",
+    "1": "fumigation.location",
+    "2": "fumigation.location",
+    "3": "fumigation.location",
+    "4": "fumigation.location",
+    "5": "fumigation.location",
+    "6": "fumigation.location",
+    "7": "fumigation.location",
     "0": "__start__",
+  },
+});
+
+// start of location for the fumigation services
+menu.state("fumigation.location", {
+  run: () => {
+    menu.con("Enter your location" + "\n 0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "fumigation.date",
+    "0": "fumigation",
   },
 });
 
@@ -389,7 +421,7 @@ menu.state("bookTraining.disclaimer", {
   run: () => {
     menu.con(
       "The total fee is 2500 please pay 1000 as a deposit." +
-        "\n If yes press (y) to proceed to payment, press (n) to cancel (0) to go back" +
+        "\n If yes press (1) to proceed to payment, press (2) to cancel (0) to go back" +
         "\n1. Yes" +
         "\n2. No" +
         "\n0. Back"

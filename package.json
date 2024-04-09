@@ -2,6 +2,7 @@
   "name": "mamakazi-js",
   "packageManager": "yarn@4.0.2",
   "scripts": {
+    "dev": "ts-node-dev --respawn src/index.ts",
     "start": "ts-node src/index.ts",
     "build": "tsc",
     "serve": "node dist/index.js"
@@ -17,6 +18,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
-    "@types/node": "^20.12.2"
+    "@types/node": "^20.12.2",
+    "ts-node-dev": "^2.0.0"
   }
 }
