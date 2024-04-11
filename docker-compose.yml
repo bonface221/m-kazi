@@ -4,3 +4,10 @@ services:
     ports:
       - "3030:3000"
     build: .
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+
+  redis:
+    image: "redis:7-alpine"

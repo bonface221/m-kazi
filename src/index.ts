@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import menu from "./ussd";
+import Redis from "ioredis";
 
 require("dotenv").config();
 
@@ -14,6 +15,8 @@ require("dotenv").config();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+export const redis = new Redis(6379, "redis://127.0.0.1:6379/0");
 
 const port = process.env.PORT || 3000;
 
