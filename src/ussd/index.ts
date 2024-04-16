@@ -357,7 +357,7 @@ menu.state("eliteCleaners", {
         "\n1. Deep house cleaning" +
         "\n2. Seat cleaning" +
         "\n3. Carpet cleaning" +
-        "\n4. Deep cleaning washrooms" +
+        "\n4. Washrooms & Sinks" +
         "\n 0. Back"
     );
   },
@@ -366,7 +366,7 @@ menu.state("eliteCleaners", {
     "1": "eliteCleaners.deepHouseCleaning",
     "2": "eliteCleaners.seatCleaning",
     "3": "eliteCleaners.carpetCleaning",
-    "4": "eliteCleaners.deepCleaningWashrooms",
+    "4": "eliteCleaners.sinkAndWashrooms",
     "0": "__start__",
   },
 });
@@ -808,8 +808,8 @@ menu.state("eliteCleaners.carpetCleaning.end", {
   },
 });
 
-// start of deep cleaning in the elite cleaners services
-menu.state("eliteCleaners.deepCleaningWashrooms", {
+// start of washrooms
+menu.state("eliteCleaners.sinkAndWashrooms", {
   run: async () => {
     if (!(await checkIfSessionExists(menu.args.sessionId))) {
       menu.end("Session expired. Please start again.");
@@ -821,16 +821,122 @@ menu.state("eliteCleaners.deepCleaningWashrooms", {
     };
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
-    menu.con("Enter the number of washrooms  @ Ksh 1500" + "\n 0. Back");
+    menu.con(
+      "Select Either Washrooms, Sinks or Both" +
+        "washrooms @ Ksh1500 and Sinks @ Ksh700" +
+        "\n1. Washrooms" +
+        "\n2. Sinks" +
+        "\n3. Both" +
+        "\n 0. Back"
+    );
   },
   next: {
-    "*\\d+": "eliteCleaners.deepCleaningWashrooms.noOfWashrooms",
+    "1": "eliteCleaners.sinkAndWashrooms.selectWashrooms",
+    "2": "eliteCleaners.sinkAndWashrooms.selectSinks",
+    "3": "eliteCleaners.sinkAndWashrooms.selectBoth",
     "0": "eliteCleaners",
   },
 });
 
 // start of deep cleaning washrooms number in the elite cleaners services
-menu.state("eliteCleaners.deepCleaningWashrooms.noOfWashrooms", {
+menu.state("eliteCleaners.sinkAndWashrooms.selectWashrooms", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+
+    d["choice"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con("Enter number of washrooms" + "\n 0. Back");
+  },
+  next: {
+    "*\\d+": "eliteCleaners.sinkAndWashrooms.noOfWashrooms",
+    "0": "eliteCleaners",
+  },
+});
+// start of deep cleaning washrooms number in the elite cleaners services
+menu.state("eliteCleaners.sinkAndWashrooms.selectSinks", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+
+    d["choice"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con("Enter number of Sinks" + "\n 0. Back");
+  },
+  next: {
+    "*\\d+": "eliteCleaners.sinkAndWashrooms.noOfSinks",
+    "0": "eliteCleaners",
+  },
+});
+// start of deep cleaning washrooms number in the elite cleaners services
+menu.state("eliteCleaners.sinkAndWashrooms.selectBoth", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+
+    d["choice"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con(
+      "Enter number of Washrooms and Sinks" +
+        "\n Washrooms @ Ksh1500 and Sinks @ Ksh700" +
+        "\n In the format 1,2 (washrooms,sinks)" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "*\\d+": "eliteCleaners.sinkAndWashrooms.bothWashroomsAndSinks",
+    "0": "eliteCleaners",
+  },
+});
+
+// start of deep cleaning washrooms number in the elite cleaners services
+menu.state("eliteCleaners.sinkAndWashrooms.bothWashroomsAndSinks", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+
+    d["noOfWashroomsAndSinks"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "1": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
+    "2": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
+    "3": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
+    "4": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
+    "0": "eliteCleaners",
+  },
+});
+
+// start of deep cleaning washrooms number in the elite cleaners services
+menu.state("eliteCleaners.sinkAndWashrooms.noOfSinks", {
   run: async () => {
     if (!(await checkIfSessionExists(menu.args.sessionId))) {
       menu.end("Session expired. Please start again.");
@@ -852,15 +958,46 @@ menu.state("eliteCleaners.deepCleaningWashrooms.noOfWashrooms", {
     );
   },
   next: {
-    "1": "eliteCleaners.deepCleaningWashrooms.moreOnLocation",
-    "2": "eliteCleaners.deepCleaningWashrooms.moreOnLocation",
-    "3": "eliteCleaners.deepCleaningWashrooms.moreOnLocation",
-    "4": "eliteCleaners.deepCleaningWashrooms.moreOnLocation",
+    "1": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
+    "2": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
+    "3": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
+    "4": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
     "0": "eliteCleaners",
   },
 });
 
-menu.state("eliteCleaners.deepCleaningWashrooms.moreOnLocation", {
+// start of deep cleaning washrooms number in the elite cleaners services
+menu.state("eliteCleaners.sinkAndWashrooms.noOfWashrooms", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+
+    d["noOfWashrooms"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "1": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
+    "2": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
+    "3": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
+    "4": "eliteCleaners.sinkAndWashrooms.moreOnLocation",
+    "0": "eliteCleaners",
+  },
+});
+
+menu.state("eliteCleaners.sinkAndWashrooms.moreOnLocation", {
   run: async () => {
     if (!(await checkIfSessionExists(menu.args.sessionId))) {
       menu.end("Session expired. Please start again.");
@@ -875,12 +1012,12 @@ menu.state("eliteCleaners.deepCleaningWashrooms.moreOnLocation", {
     menu.con("Enter more on your location" + "\n 0. Back");
   },
   next: {
-    "*[a-zA-Z]+": "eliteCleaners.deepCleaningWashrooms.date",
+    "*[a-zA-Z]+": "eliteCleaners.sinkAndWashrooms.date",
     "0": "eliteCleaners",
   },
 });
 
-menu.state("eliteCleaners.deepCleaningWashrooms.date", {
+menu.state("eliteCleaners.sinkAndWashrooms.date", {
   run: async () => {
     if (!(await checkIfSessionExists(menu.args.sessionId))) {
       menu.end("Session expired. Please start again.");
@@ -894,11 +1031,11 @@ menu.state("eliteCleaners.deepCleaningWashrooms.date", {
     menu.con("Enter date for cleaning" + "\n format: DD/MM/YYY" + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.deepCleaningWashrooms.time",
+    "*\\d+": "eliteCleaners.sinkAndWashrooms.time",
     "0": "eliteCleaners.deepHouseCleaning",
   },
 });
-menu.state("eliteCleaners.deepCleaningWashrooms.time", {
+menu.state("eliteCleaners.sinkAndWashrooms.time", {
   run: async () => {
     if (!(await checkIfSessionExists(menu.args.sessionId))) {
       menu.end("Session expired. Please start again.");
@@ -912,11 +1049,11 @@ menu.state("eliteCleaners.deepCleaningWashrooms.time", {
     menu.con("Enter time for cleaning" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.deepCleaningWashrooms.end",
+    "*\\d+": "eliteCleaners.sinkAndWashrooms.end",
     "0": "eliteCleaners.deepHouseCleaning",
   },
 });
-menu.state("eliteCleaners.deepCleaningWashrooms.end", {
+menu.state("eliteCleaners.sinkAndWashrooms.end", {
   run: async () => {
     if (!(await checkIfSessionExists(menu.args.sessionId))) {
       menu.end("Session expired. Please start again.");
