@@ -11,6 +11,12 @@ let menu = new UssdMenu({
   provider: "africasTalking",
 });
 
+//common message
+let finalMessage =
+  "Your order is successfully completed; !" +
+  "\n Service Provider(s) will contact you shortly." +
+  "\n Welcome to MAMAKAZI FAMILY!";
+
 // Define menu states
 menu.startState({
   run: async () => {
@@ -26,6 +32,8 @@ menu.startState({
         "\n2. Elite Cleaners" +
         "\n3. Fumigation" +
         "\n4. Mama Fua Academy" +
+        "\n5. Mama Kazi Chama" +
+        "\n6. Monthly MAMAFUA" +
         "\n00. Exit"
     );
   },
@@ -36,6 +44,8 @@ menu.startState({
     "2": "eliteCleaners",
     "3": "fumigation",
     "4": "mamaFuaAcademy",
+    "5": "mamakaziChama",
+    "6": "monthlyMamaFua",
     "00": "quit",
   },
 });
@@ -199,9 +209,7 @@ menu.state("homeWash.end", {
 
       console.log(res);
 
-      menu.end(
-        "Awesome. We will send you a confirmation message shortly. Thank you!"
-      );
+      menu.end(finalMessage);
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -322,9 +330,7 @@ menu.state("laudromat.end", {
 
       console.log(res);
 
-      menu.end(
-        "Awesome. We will send you a confirmation message shortly. Thank you!"
-      );
+      menu.end(finalMessage);
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -510,9 +516,7 @@ menu.state("eliteCleaners.deepHousingCleaning.end", {
 
       console.log(res);
 
-      menu.end(
-        "Awesome. We will send you a confirmation message shortly. Thank you!"
-      );
+      menu.end(finalMessage);
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -651,9 +655,7 @@ menu.state("eliteCleaners.seatCleaning.end", {
 
       console.log(res);
 
-      menu.end(
-        "Awesome. We will send you a confirmation message shortly. Thank you!"
-      );
+      menu.end(finalMessage);
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -801,9 +803,7 @@ menu.state("eliteCleaners.carpetCleaning.end", {
         "Awesome. We will send you a confirmation message shortly. Thank you!"
       );
     } catch {
-      menu.end(
-        "An error occured when processing your request. Please try again later."
-      );
+      menu.end(finalMessage);
     }
   },
 });
@@ -936,9 +936,7 @@ menu.state("eliteCleaners.deepCleaningWashrooms.end", {
 
       console.log(res);
 
-      menu.end(
-        "Awesome. We will send you a confirmation message shortly. Thank you!"
-      );
+      menu.end(finalMessage);
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -1099,9 +1097,7 @@ menu.state("fumigation.end", {
 
       console.log(res);
 
-      menu.end(
-        "Awesome. We will send you a confirmation message shortly. Thank you!"
-      );
+      menu.end(finalMessage);
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -1224,8 +1220,8 @@ menu.state("bookTraining.disclaimer", {
     d["idNumber"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
     menu.con(
-      "The total fee is 2500 please pay 1000 as a deposit." +
-        "\n If yes press (1) to proceed to payment, press (2) to cancel (0) to go back" +
+      "Fee between 2500-5000.Please pay deposit of Kshs.1000." +
+        "\n If yes press (1) to proceed, press (2) to cancel (0) to go back" +
         "\n1. Yes" +
         "\n2. No" +
         "\n0. Back"
@@ -1249,7 +1245,8 @@ menu.state("bookTraining.end", {
       console.log(res);
 
       menu.end(
-        "Awesome. We will send you a confirmation message shortly. Thank you!"
+        "Registration is complete and received." +
+          "Mama Kazi Team will provide payment shortly. Thank you!"
       );
     } catch {
       menu.end(
@@ -1356,8 +1353,9 @@ menu.state("sponsor.end", {
       console.log(res);
 
       menu.end(
-        "Thanks for enabling our MOTHER-STUDIES programme. GOD BLESS!" +
-          "\nWe will Prompt you for payment. Thank you!"
+        "Thanks for being a MAMA FUA BACK TO SCHOOL CARAVAN HERO," +
+          "\n May God to you and your generation" +
+          "\n Mama Kazi Team will provide payment shortly. Thank you!"
       );
     } catch {
       menu.end(
@@ -1367,6 +1365,570 @@ menu.state("sponsor.end", {
   },
 });
 
+menu.state("mamakaziChama", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    let newData = {
+      service: "5",
+    };
+    await redis.set(menu.args.sessionId, JSON.stringify(newData));
+
+    menu.con(
+      "Welcome to Mama Kazi Chama" +
+        "\n1. Register" +
+        "\n2. Merry Go Round" +
+        "\n3. Asset Chama" +
+        "\n0. Back"
+    );
+  },
+  next: {
+    "1": "mamakaziChama.register",
+    "2": "mamakaziChama.merryGoRound",
+    "3": "mamakaziChama.assetChama",
+    "0": "__start__",
+  },
+});
+
+menu.state("mamakaziChama.register", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    let newData = {
+      service: "5",
+      serviceType: "1",
+    };
+
+    await redis.set(menu.args.sessionId, JSON.stringify(newData));
+
+    menu.con("Enter your Full Name" + "\n0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "mamakaziChama.register.location",
+    "0": "mamakaziChama",
+  },
+});
+
+menu.state("mamakaziChama.register.location", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["name"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "1": "mamakaziChama.register.moreOnLocation",
+    "2": "mamakaziChama.register.moreOnLocation",
+    "3": "mamakaziChama.register.moreOnLocation",
+    "4": "mamakaziChama.register.moreOnLocation",
+    "0": "mamakaziChama.register",
+  },
+});
+
+menu.state("mamakaziChama.register.moreOnLocation", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["location"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter more on your location" + "\n 0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "mamakaziChama.register.idNumber",
+    "0": "mamakaziChama.register.location",
+  },
+});
+
+menu.state("mamakaziChama.register.idNumber", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["moreOnLocation"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter your ID number" + "\n0. Back");
+  },
+  next: {
+    "*\\d+": "mamakaziChama.register.nextOfKinPhone",
+    "0": "mamakaziChama.register.location",
+  },
+});
+
+menu.state("mamakaziChama.register.nextOfKinPhone", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["idNumber"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter your next of kin phone number" + "\n0. Back");
+  },
+  next: {
+    "*\\d+": "mamakaziChama.register.end",
+    "0": "mamakaziChama.register.idNumber",
+  },
+});
+
+menu.state("mamakaziChama.register.end", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["nextOfKinPhone"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    try {
+      const res = await sendToTheServer(
+        menu.args.sessionId,
+        menu.args.phoneNumber
+      );
+
+      console.log(res);
+
+      menu.end(
+        "Registration is successfully completed," +
+          "\n Mama Kazi Team will reach out at the earliest convenience."
+      );
+    } catch {
+      menu.end(
+        "An error occured when processing your request. Please try again later."
+      );
+    }
+  },
+});
+
+menu.state("mamakaziChama.merryGoRound", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    let newData = {
+      service: "5",
+      serviceType: "2",
+    };
+
+    await redis.set(menu.args.sessionId, JSON.stringify(newData));
+
+    menu.con("Enter your Full Name" + "\n0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "mamakaziChama.merryGoRound.location",
+    "0": "mamakaziChama",
+  },
+});
+
+menu.state("mamakaziChama.merryGoRound.location", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["name"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "1": "mamakaziChama.merryGoRound.moreOnLocation",
+    "2": "mamakaziChama.merryGoRound.moreOnLocation",
+    "3": "mamakaziChama.merryGoRound.moreOnLocation",
+    "4": "mamakaziChama.merryGoRound.moreOnLocation",
+    "0": "mamakaziChama.merryGoRound",
+  },
+});
+
+menu.state("mamakaziChama.merryGoRound.moreOnLocation", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["location"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter more on your location" + "\n 0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "mamakaziChama.merryGoRound.idNumber",
+    "0": "mamakaziChama.merryGoRound.location",
+  },
+});
+
+menu.state("mamakaziChama.merryGoRound.idNumber", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["moreOnLocation"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter your ID number" + "\n0. Back");
+  },
+  next: {
+    "*\\d+": "mamakaziChama.merryGoRound.amount",
+    "0": "mamakaziChama.merryGoRound.location",
+  },
+});
+
+menu.state("mamakaziChama.merryGoRound.amount", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["idNumber"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter the amount" + "\n0. Back");
+  },
+  next: {
+    "*\\d+": "mamakaziChama.merryGoRound.end",
+    "0": "mamakaziChama.merryGoRound.idNumber",
+  },
+});
+
+menu.state("mamakaziChama.merryGoRound.end", {
+  run: async () => {
+    try {
+      const res = await sendToTheServer(
+        menu.args.sessionId,
+        menu.args.phoneNumber
+      );
+
+      console.log(res);
+
+      menu.end(
+        "Your request has successfully been received," +
+          "Mama Kazi Team will reach out at the earliest convenience."
+      );
+    } catch {
+      menu.end(
+        "An error occured when processing your request. Please try again later."
+      );
+    }
+  },
+});
+
+menu.state("mamakaziChama.assetChama", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    let newData = {
+      service: "5",
+      serviceType: "3",
+    };
+
+    await redis.set(menu.args.sessionId, JSON.stringify(newData));
+
+    menu.con("Enter your Full Name" + "\n0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "mamakaziChama.assetChama.location",
+    "0": "mamakaziChama",
+  },
+});
+
+menu.state("mamakaziChama.assetChama.location", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["name"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "1": "mamakaziChama.assetChama.moreOnLocation",
+    "2": "mamakaziChama.assetChama.moreOnLocation",
+    "3": "mamakaziChama.assetChama.moreOnLocation",
+    "4": "mamakaziChama.assetChama.moreOnLocation",
+    "0": "mamakaziChama.assetChama",
+  },
+});
+
+menu.state("mamakaziChama.assetChama.moreOnLocation", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["location"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter more on your location" + "\n 0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "mamakaziChama.assetChama.idNumber",
+    "0": "mamakaziChama.assetChama.location",
+  },
+});
+
+menu.state("mamakaziChama.assetChama.idNumber", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["moreOnLocation"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter your ID number" + "\n0. Back");
+  },
+  next: {
+    "*\\d+": "mamakaziChama.assetChama.nextOfKinPhone",
+    "0": "mamakaziChama.assetChama.location",
+  },
+});
+
+menu.state("mamakaziChama.assetChama.nextOfKinPhone", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["idNumber"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter your next of kin phone number" + "\n0. Back");
+  },
+  next: {
+    "*\\d+": "mamakaziChama.assetChama.end",
+    "0": "mamakaziChama.assetChama.idNumber",
+  },
+});
+
+//end
+menu.state("mamakaziChama.assetChama.end", {
+  run: async () => {
+    try {
+      const res = await sendToTheServer(
+        menu.args.sessionId,
+        menu.args.phoneNumber
+      );
+
+      console.log(res);
+
+      menu.end(
+        "Your request has successfully been received," +
+          "\nMama Kazi Team will reach out at the earliest convenience."
+      );
+    } catch {
+      menu.end(
+        "An error occured when processing your request. Please try again later."
+      );
+    }
+  },
+});
+
+menu.state("monthlyMamaFua", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    let newData = {
+      service: "6",
+    };
+    await redis.set(menu.args.sessionId, JSON.stringify(newData));
+
+    menu.con(
+      "Welcome to Monthly Mama Fua" +
+        "\n1. Once a week @ Kshs.5000" +
+        "\n2. Twice a week @ 6500" +
+        "\n3. Three times a week @ 8500" +
+        "\n4. Four times a week @ 14000" +
+        "\n5. Five times a week @ 16000" +
+        "\n0. Back"
+    );
+  },
+  next: {
+    "1": "monthlyMamaFua.name",
+    "2": "monthlyMamaFua.name",
+    "3": "monthlyMamaFua.name",
+    "4": "monthlyMamaFua.name",
+    "5": "monthlyMamaFua.name",
+    "0": "__start__",
+  },
+});
+
+menu.state("monthlyMamaFua.name", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    let newData = {
+      service: "6",
+      serviceType: "1",
+    };
+    await redis.set(menu.args.sessionId, JSON.stringify(newData));
+    menu.con("Enter your Full Name" + "\n0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "monthlyMamaFua.location",
+    "0": "monthlyMamaFua",
+  },
+});
+
+menu.state("monthlyMamaFua.location", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["name"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "1": "monthlyMamaFua.moreOnLocation",
+    "2": "monthlyMamaFua.moreOnLocation",
+    "3": "monthlyMamaFua.moreOnLocation",
+    "4": "monthlyMamaFua.moreOnLocation",
+    "0": "monthlyMamaFua",
+  },
+});
+
+menu.state("monthlyMamaFua.moreOnLocation", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["location"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter more on your location" + "\n 0. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "monthlyMamaFua.idNumber",
+    "0": "monthlyMamaFua.location",
+  },
+});
+
+menu.state("monthlyMamaFua.idNumber", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["moreOnLocation"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter your ID number" + "\n0. Back");
+  },
+  next: {
+    "*\\d+": "monthlyMamaFua.date",
+    "0": "monthlyMamaFua.location",
+  },
+});
+
+//date and time
+menu.state("monthlyMamaFua.date", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["moreOnLocation"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter date for cleaning" + "\n format: DD/MM/YYY" + "\n 0. Back");
+  },
+  next: {
+    "*\\d+": "monthlyMamaFua.time",
+    "0": "monthlyMamaFua",
+  },
+});
+
+menu.state("monthlyMamaFua.time", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["date"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter time for cleaning" + "\n format: hh:mm" + "\n 0. Back");
+  },
+  next: {
+    "*\\d+": "monthlyMamaFua.end",
+    "0": "monthlyMamaFua.date",
+  },
+});
+
+menu.state("monthlyMamaFua.end", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["time"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    try {
+      const res = await sendToTheServer(
+        menu.args.sessionId,
+        menu.args.phoneNumber
+      );
+
+      console.log(res);
+
+      menu.end(finalMessage);
+    } catch {
+      menu.end(
+        "An error occured when processing your request. Please try again later."
+      );
+    }
+  },
+});
 // ussd quit
 menu.state("quit", {
   run: () => {
