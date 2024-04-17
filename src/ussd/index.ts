@@ -13,9 +13,9 @@ let menu = new UssdMenu({
 
 //common message
 let finalMessage =
-  "Your order is successfully completed; !" +
-  "\n Service Provider(s) will contact you shortly." +
-  "\n Welcome to MAMAKAZI FAMILY!";
+  "Your order is successfully completed!" +
+  "\nService Provider(s) will contact you shortly." +
+  "\nWelcome to MAMAKAZI FAMILY!";
 
 // Define menu states
 menu.startState({
