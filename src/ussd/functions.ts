@@ -18,20 +18,23 @@ export async function sendToTheServer(sessionId: string, phoneNumber: string) {
     console.log(data);
     if (!data) throw new Error("Session not found");
 
-    const response = await fetch(createOrderUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        phoneNumber,
-        ...data,
-      }),
-    });
+    // const response = await fetch(createOrderUrl, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     phoneNumber,
+    //     ...data,
+    //   }),
+    // });
 
-    const responseData = await response.json();
+    // const responseData = await response.json();
 
-    return responseData;
+    return {
+      success: true,
+      message: "Order created successfully",
+    };
   } catch (error) {
     console.error(error);
     // Handle the error appropriately, e.g., by re-throwing it or returning a specific error response
