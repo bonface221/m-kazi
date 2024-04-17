@@ -29,11 +29,12 @@ menu.startState({
     menu.con(
       "Welcome to MAMA KAZI APP :" +
         "\n1. Laundry" +
-        "\n2. Elite Cleaners" +
-        "\n3. Fumigation" +
-        "\n4. Mama Fua Academy" +
-        "\n5. Mama Kazi Chama" +
-        "\n6. Monthly MAMAFUA" +
+        "\n2. House Cleaning" +
+        "\n3. Elite Cleaners" +
+        "\n4. Fumigation" +
+        "\n5. Mama Fua Academy" +
+        "\n6. Mama Kazi Chama" +
+        "\n7. Monthly MAMAFUA" +
         "\n00. Exit"
     );
   },
@@ -41,11 +42,12 @@ menu.startState({
   // next object links to next state based on user input
   next: {
     "1": "laundry",
-    "2": "eliteCleaners",
-    "3": "fumigation",
-    "4": "mamaFuaAcademy",
-    "5": "mamakaziChama",
-    "6": "monthlyMamaFua",
+    "2": "houseCleaning",
+    "3": "eliteCleaners",
+    "4": "fumigation",
+    "5": "mamaFuaAcademy",
+    "6": "mamakaziChama",
+    "7": "monthlyMamaFua",
     "00": "quit",
   },
 });
@@ -339,6 +341,172 @@ menu.state("laudromat.end", {
   },
 });
 
+//start of house cleaning
+menu.state("houseCleaning", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    let newData = {
+      service: "2",
+    };
+
+    await redis.set(menu.args.sessionId, JSON.stringify(newData));
+
+    menu.con(
+      "Welcome to House Cleaning!" +
+        "\n Enter the number of rooms(Ksh.250/room)" +
+        "\n 0. Back"
+    );
+  },
+  next: {
+    "*\\d+": "houseCleaning.rooms",
+    "0": "__start__",
+  },
+});
+
+menu.state("houseCleaning.rooms", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+
+    d["noOfRooms"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con("Enter Your Name" + "\n 00. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "houseCleaning.name",
+    "00": "__start__",
+  },
+});
+
+menu.state("houseCleaning.name", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+
+    d["name"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con(
+      "Pick your location" +
+        "\n 1. Nairobi" +
+        "\n 2. Mombasa" +
+        "\n 3. Kisumu" +
+        "\n 4. Eldoret" +
+        "\n 00. Home"
+    );
+  },
+  next: {
+    "1": "houseCleaning.location",
+    "2": "houseCleaning.location",
+    "3": "houseCleaning.location",
+    "4": "houseCleaning.location",
+    "00": "__start__",
+  },
+});
+
+menu.state("houseCleaning.location", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+
+    d["location"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con("Enter More on your location" + "\n 00. Back");
+  },
+  next: {
+    "*[a-zA-Z]+": "houseCleaning.moreOnLocation",
+    "00": "__start__",
+  },
+});
+
+menu.state("houseCleaning.moreOnLocation", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+
+    d["moreOnLocation"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con(
+      "Enter date for cleaning" + "\n format: DD/MM/YYY" + "\n 00. Back"
+    );
+  },
+  next: {
+    "*\\d+": "houseCleaning.date",
+    "00": "__start__",
+  },
+});
+
+menu.state("houseCleaning.date", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+
+    d["date"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    menu.con("Enter time for cleaning" + "\n format: hh:mm" + "\n 00. Back");
+  },
+  next: {
+    "*\\d+": "houseCleaning.time",
+    "00": "__start__",
+  },
+});
+
+menu.state("houseCleaning.time", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+
+    d["time"] = menu.val;
+
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
+    try {
+      const res = await sendToTheServer(
+        menu.args.sessionId,
+        menu.args.phoneNumber
+      );
+
+      console.log(res);
+
+      menu.end(finalMessage);
+    } catch {
+      menu.end(
+        "An error occured when processing your request. Please try again later."
+      );
+    }
+  },
+});
+
 // start of elite cleaners services
 menu.state("eliteCleaners", {
   run: async () => {
@@ -347,7 +515,7 @@ menu.state("eliteCleaners", {
     }
 
     let newData = {
-      service: "2",
+      service: "3",
     };
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
@@ -379,7 +547,7 @@ menu.state("eliteCleaners.deepHouseCleaning", {
     }
 
     const newData = {
-      service: "2",
+      service: "3",
       type: "1",
     };
 
@@ -533,7 +701,7 @@ menu.state("eliteCleaners.seatCleaning", {
     }
 
     const newData = {
-      service: "2",
+      service: "3",
       type: "2",
     };
 
@@ -672,7 +840,7 @@ menu.state("eliteCleaners.carpetCleaning", {
     }
 
     const newData = {
-      service: "2",
+      service: "3",
       type: "3",
     };
 
@@ -816,7 +984,7 @@ menu.state("eliteCleaners.sinkAndWashrooms", {
     }
 
     const newData = {
-      service: "2",
+      service: "3",
       type: "4",
     };
 
@@ -1090,7 +1258,7 @@ menu.state("fumigation", {
     }
 
     let newData = {
-      service: "3",
+      service: "4",
     };
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
@@ -1250,7 +1418,7 @@ menu.state("mamaFuaAcademy", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "4",
+      service: "5",
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
 
@@ -1275,7 +1443,7 @@ menu.state("bookTraining.name", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "4",
+      service: "5",
       serviceType: "1",
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
@@ -1400,7 +1568,7 @@ menu.state("sponsor.name", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "4",
+      service: "5",
       serviceType: "2",
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
@@ -1472,8 +1640,8 @@ menu.state("sponsor.disclaimer", {
     );
   },
   next: {
-    1: "sponsor.end",
-    2: "mamaFuaAcademy",
+    "1": "sponsor.end",
+    "2": "mamaFuaAcademy",
     "0": "sponsor.phone",
   },
 });
@@ -1508,7 +1676,7 @@ menu.state("mamakaziChama", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "5",
+      service: "6",
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
 
@@ -1534,7 +1702,7 @@ menu.state("mamakaziChama.register", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "5",
+      service: "6",
       serviceType: "1",
     };
 
@@ -1661,7 +1829,7 @@ menu.state("mamakaziChama.merryGoRound", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "5",
+      service: "6",
       serviceType: "2",
     };
 
@@ -1783,7 +1951,7 @@ menu.state("mamakaziChama.assetChama", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "5",
+      service: "6",
       serviceType: "3",
     };
 
@@ -1906,7 +2074,7 @@ menu.state("monthlyMamaFua", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "6",
+      service: "7",
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
 
@@ -1936,7 +2104,7 @@ menu.state("monthlyMamaFua.name", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "6",
+      service: "7",
       serviceType: "1",
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
