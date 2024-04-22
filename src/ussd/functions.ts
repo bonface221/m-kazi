@@ -1,6 +1,7 @@
 import { redis } from "..";
 
-const createOrderUrl = "http://localhost:3001/api/create-order";
+const createOrderUrl =
+  process.env.SERVER_URL || "http://localhost:3001/api/create-order";
 
 export async function checkIfSessionExists(sessionId: string) {
   return await redis.exists(sessionId);
