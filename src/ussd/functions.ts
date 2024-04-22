@@ -1,6 +1,6 @@
 import { redis } from "..";
 
-const createOrderUrl = "https://mamakazi.clouderp.ke/api/create-order";
+const createOrderUrl = "http://localhost:3001/api/create-order";
 
 export async function checkIfSessionExists(sessionId: string) {
   return await redis.exists(sessionId);
@@ -15,26 +15,23 @@ export async function getSessionAsJson(sessionId: string) {
 export async function sendToTheServer(sessionId: string, phoneNumber: string) {
   try {
     const data = await getSessionAsJson(sessionId);
-    console.log(data);
     if (!data) throw new Error("Session not found");
 
-    // const response = await fetch(createOrderUrl, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     phoneNumber,
-    //     ...data,
-    //   }),
-    // });
+    const response = await fetch(createOrderUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phoneNumber,
+        sessionId,
+        ...data,
+      }),
+    });
 
-    // const responseData = await response.json();
+    const responseData = await response.json();
 
-    return {
-      success: true,
-      message: "Order created successfully",
-    };
+    return responseData;
   } catch (error) {
     console.error(error);
     // Handle the error appropriately, e.g., by re-throwing it or returning a specific error response

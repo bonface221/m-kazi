@@ -17,11 +17,6 @@ let finalMessage =
   "\nService Provider(s) will contact you shortly." +
   "\nWelcome to MAMAKAZI FAMILY!";
 
-// date regex dd-mm-yyyy
-let dateRegex = "*^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/(19|20)\\d{2}$";
-let timeRegex = "*^(?:[01]\\d|2[0-3]):[0-5]\\d$";
-let moreOnLocationRegex = "*[a-zA-Z0-9]+";
-
 // Define menu states
 menu.startState({
   run: async () => {
@@ -32,15 +27,14 @@ menu.startState({
 
     // use menu.con() to send response without terminating the session
     menu.con(
-      "Welcome to MAMA KAZI APP" +
-        "\n Your quality home-care partner; 0706291676" +
+      "Welcome to MAMA KAZI APP :" +
         "\n1. Laundry" +
         "\n2. House Cleaning" +
         "\n3. Elite Cleaners" +
         "\n4. Fumigation" +
         "\n5. Mama Fua Academy" +
-        "\n6. Monthly MAMAFUA" +
-        "\n7. Mama Kazi Chama" +
+        "\n6. Mama Kazi Chama" +
+        "\n7. Monthly MAMAFUA" +
         "\n00. Exit"
     );
   },
@@ -52,8 +46,8 @@ menu.startState({
     "3": "eliteCleaners",
     "4": "fumigation",
     "5": "mamaFuaAcademy",
-    "6": "monthlyMamaFua",
-    "7": "mamakaziChama",
+    "6": "mamakaziChama",
+    "7": "monthlyMamaFua",
     "00": "quit",
   },
 });
@@ -66,7 +60,7 @@ menu.state("laundry", {
     }
 
     let newData = {
-      service: "laundry",
+      service: "1",
     };
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
@@ -90,8 +84,8 @@ menu.state("homeWash", {
     }
 
     const newData = {
-      service: "laundry",
-      type: "homewash",
+      service: "1",
+      type: "1",
     };
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
@@ -116,7 +110,7 @@ menu.state("homeWash.location", {
 
     const d = await getSessionAsJson(menu.args.sessionId);
 
-    d["noOfBaskets"] = menu.val;
+    d["noOfbaskets"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
 
@@ -153,7 +147,7 @@ menu.state("homewash.moreOnLocation", {
     menu.con("Enter more on your location" + "\n 0. Back");
   },
   next: {
-    [moreOnLocationRegex]: "homeWash.date",
+    "*[a-zA-Z]+": "homeWash.date",
     "0": "homeWash.location",
   },
 });
@@ -166,17 +160,13 @@ menu.state("homeWash.date", {
 
     const d = await getSessionAsJson(menu.args.sessionId);
 
-    d["address"] = menu.val;
+    d["moreOnLocation"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter date for pick up" + "\n format: DD/MM/YYYY" + "\n 0. Back");
+    menu.con("Enter date for pick up" + "\n format: DD/MM/YYY" + "\n 0. Back");
   },
-
-  //simple regex to match date format
-  // here is the regex for date format dd/mm/yyyy
-  // /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[0-2])[/]d{4}$/
   next: {
-    [dateRegex]: "homeWash.time",
+    "*\\d+": "homeWash.time",
     "0": "homeWash.location",
   },
 });
@@ -192,12 +182,10 @@ menu.state("homeWash.time", {
     d["date"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con(
-      "Enter time for pick up" + "\n format: hh:mm 24h clock" + "\n 0. Back"
-    );
+    menu.con("Enter time for pick up" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
-    [timeRegex]: "homeWash.end",
+    "*\\d+": "homeWash.end",
     "0": "homeWash.date",
   },
 });
@@ -223,13 +211,7 @@ menu.state("homeWash.end", {
 
       console.log(res);
 
-      if (res.success) {
-        menu.end(finalMessage);
-      } else {
-        menu.end(
-          "An error occured when processing your request. Please try again later."
-        );
-      }
+      menu.end(finalMessage);
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -246,8 +228,8 @@ menu.state("laundromat", {
     }
 
     const newData = {
-      service: "laundry",
-      type: "laundromat",
+      service: "1",
+      type: "2",
     };
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
@@ -286,7 +268,7 @@ menu.state("laundromat.moreOnLocation", {
     menu.con("Enter more on your location" + "\n 0. Back");
   },
   next: {
-    [moreOnLocationRegex]: "laundromat.date",
+    "*[a-zA-Z]+": "laundromat.date",
     "0": "laundromat.location",
   },
 });
@@ -299,13 +281,13 @@ menu.state("laundromat.date", {
 
     const d = await getSessionAsJson(menu.args.sessionId);
 
-    d["address"] = menu.val;
+    d["moreOnLocation"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter date for pick up" + "\n format: DD/MM/YYYY" + "\n 0. Back");
+    menu.con("Enter date for pick up" + "\n format: DD/MM/YYY" + "\n 0. Back");
   },
   next: {
-    [dateRegex]: "laundromat.time",
+    "*\\d+": "laundromat.time",
     "0": "laundromat",
   },
 });
@@ -324,7 +306,7 @@ menu.state("laundromat.time", {
     menu.con("Enter time for pick up" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
-    [timeRegex]: "laudromat.end",
+    "*\\d+": "laudromat.end",
     "0": "laundromat.date",
   },
 });
@@ -350,13 +332,7 @@ menu.state("laudromat.end", {
 
       console.log(res);
 
-      if (res.success) {
-        menu.end(finalMessage);
-      } else {
-        menu.end(
-          "An error occured when processing your request. Please try again later."
-        );
-      }
+      menu.end(finalMessage);
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -472,7 +448,9 @@ menu.state("houseCleaning.moreOnLocation", {
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
 
-    menu.con("Enter date" + "\n format: DD/MM/YYYY" + "\n 00. Back");
+    menu.con(
+      "Enter date for cleaning" + "\n format: DD/MM/YYY" + "\n 00. Back"
+    );
   },
   next: {
     "*\\d+": "houseCleaning.date",
@@ -492,7 +470,7 @@ menu.state("houseCleaning.date", {
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
 
-    menu.con("Enter time" + "\n format: hh:mm" + "\n 00. Back");
+    menu.con("Enter time for cleaning" + "\n format: hh:mm" + "\n 00. Back");
   },
   next: {
     "*\\d+": "houseCleaning.time",
@@ -581,7 +559,6 @@ menu.state("eliteCleaners.deepHouseCleaning", {
         "\n3. 2 bedroom @ Ksh 8000" +
         "\n4. 3 bedroom @ Ksh 10000" +
         "\n5. 4 bedroom @ Ksh 14000" +
-        "\n6. 5 bedroom @ Ksh 18500" +
         "\n6. 6 bedroom @ Ksh 21000" +
         "\n7. 7 bedroom @ Ksh 25000" +
         "\n 0. Back"
@@ -660,7 +637,7 @@ menu.state("eliteCleaners.deepHousingCleaning.date", {
     d["moreOnLocation"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter date" + "\n format: DD/MM/YYYY" + "\n 0. Back");
+    menu.con("Enter date for cleaning" + "\n format: DD/MM/YYY" + "\n 0. Back");
   },
   next: {
     "*\\d+": "eliteCleaners.deepHousingCleaning.time",
@@ -679,7 +656,7 @@ menu.state("eliteCleaners.deepHousingCleaning.time", {
     d["date"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter time" + "\n format: hh:mm" + "\n 0. Back");
+    menu.con("Enter time for cleaning" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
     "*\\d+": "eliteCleaners.deepHousingCleaning.end",
@@ -799,7 +776,7 @@ menu.state("eliteCleaners.seatCleaning.date", {
     d["moreOnLocation"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter date" + "\n format: DD/MM/YYYY" + "\n 0. Back");
+    menu.con("Enter date for cleaning" + "\n format: DD/MM/YYY" + "\n 0. Back");
   },
   next: {
     "*\\d+": "eliteCleaners.seatCleaning.time",
@@ -818,7 +795,7 @@ menu.state("eliteCleaners.seatCleaning.time", {
     d["date"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter time" + "\n format: hh:mm" + "\n 0. Back");
+    menu.con("Enter time for cleaning" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
     "*\\d+": "eliteCleaners.seatCleaning.end",
@@ -943,7 +920,7 @@ menu.state("eliteCleaners.carpetCleaning.date", {
     d["moreOnLocation"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter date" + "\n format: DD/MM/YYYY" + "\n 0. Back");
+    menu.con("Enter date for cleaning" + "\n format: DD/MM/YYY" + "\n 0. Back");
   },
   next: {
     "*\\d+": "eliteCleaners.carpetCleaning.time",
@@ -962,7 +939,7 @@ menu.state("eliteCleaners.carpetCleaning.time", {
     d["date"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter time" + "\n format: hh:mm" + "\n 0. Back");
+    menu.con("Enter time for cleaning" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
     "*\\d+": "eliteCleaners.carpetCleaning.end",
@@ -1219,7 +1196,7 @@ menu.state("eliteCleaners.sinkAndWashrooms.date", {
     d["moreOnLocation"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter date" + "\n format: DD/MM/YYYY" + "\n 0. Back");
+    menu.con("Enter date for cleaning" + "\n format: DD/MM/YYY" + "\n 0. Back");
   },
   next: {
     "*\\d+": "eliteCleaners.sinkAndWashrooms.time",
@@ -1237,7 +1214,7 @@ menu.state("eliteCleaners.sinkAndWashrooms.time", {
     d["date"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter time" + "\n format: hh:mm" + "\n 0. Back");
+    menu.con("Enter time for cleaning" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
     "*\\d+": "eliteCleaners.sinkAndWashrooms.end",
@@ -1289,9 +1266,9 @@ menu.state("fumigation", {
     menu.con(
       "Select your house size for fumigation" +
         "\n1. Bedsitter @ kshs.2000" +
-        "\n2. 1 bedroom @ kshs. 3000" +
-        "\n3. 2 bedroom @ kshs. 4000" +
-        "\n4. 3 bedroom @ kshs.4500" +
+        "\n2. One bedroom @ kshs. 3000" +
+        "\n3. Two bedroom @ kshs. 35000" +
+        "\n4. 3 bedroom @ kshs.4000" +
         "\n5. 4 bedroom @ kshs.5000" +
         "\n6. 5 bedroom @ kshs.6000" +
         "\n7. 6 bedroom @ kshs. 6500" +
@@ -1374,7 +1351,7 @@ menu.state("fumigation.date", {
     await redis.set(menu.args.sessionId, JSON.stringify(d));
 
     menu.con(
-      "Enter date for fumigation" + "\n format: DD/MM/YYYY" + "\n 0. Back"
+      "Enter date for fumigation" + "\n format: DD/MM/YYY" + "\n 0. Back"
     );
   },
   next: {
@@ -1681,9 +1658,9 @@ menu.state("sponsor.end", {
       console.log(res);
 
       menu.end(
-        "Dignifying the next generation of women, all thanks to you." +
-          "\n MAMA KAZI TEAM will be communicating the payment details shortly." +
-          "\n Thank you!"
+        "Thanks for being a MAMA FUA BACK TO SCHOOL CARAVAN HERO," +
+          "\n May God to you and your generation" +
+          "\n Mama Kazi Team will provide payment shortly. Thank you!"
       );
     } catch {
       menu.end(
@@ -2176,7 +2153,23 @@ menu.state("monthlyMamaFua.moreOnLocation", {
     menu.con("Enter more on your location" + "\n 0. Back");
   },
   next: {
-    "*[a-zA-Z]+": "monthlyMamaFua.date",
+    "*[a-zA-Z]+": "monthlyMamaFua.idNumber",
+    "0": "monthlyMamaFua.location",
+  },
+});
+
+menu.state("monthlyMamaFua.idNumber", {
+  run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["moreOnLocation"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+    menu.con("Enter your ID number" + "\n0. Back");
+  },
+  next: {
+    "*\\d+": "monthlyMamaFua.date",
     "0": "monthlyMamaFua.location",
   },
 });
@@ -2190,7 +2183,7 @@ menu.state("monthlyMamaFua.date", {
     const d = await getSessionAsJson(menu.args.sessionId);
     d["moreOnLocation"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter date" + "\n format: DD/MM/YYYY" + "\n 0. Back");
+    menu.con("Enter date for cleaning" + "\n format: DD/MM/YYY" + "\n 0. Back");
   },
   next: {
     "*\\d+": "monthlyMamaFua.time",
@@ -2206,7 +2199,7 @@ menu.state("monthlyMamaFua.time", {
     const d = await getSessionAsJson(menu.args.sessionId);
     d["date"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con("Enter time" + "\n format: hh:mm" + "\n 0. Back");
+    menu.con("Enter time for cleaning" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
     "*\\d+": "monthlyMamaFua.end",

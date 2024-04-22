@@ -20,6 +20,7 @@ app.get("/", (req: Request, res: Response) => {
 //registering USSD handler with express
 app.post("/ussd", (req: Request, res: Response) => {
   //ussd logic here
+
   menu.run(req.body, (ussdResult: string) => {
     res.send(ussdResult);
   });
