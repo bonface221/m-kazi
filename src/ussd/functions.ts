@@ -10,13 +10,17 @@ export async function checkIfSessionExists(sessionId: string) {
 export async function getSessionAsJson(sessionId: string) {
   let value = await redis.get(sessionId);
   if (!value) return null;
+
   return JSON.parse(value);
 }
 
 export async function sendToTheServer(sessionId: string, phoneNumber: string) {
   try {
     const data = await getSessionAsJson(sessionId);
+
     if (!data) throw new Error("Session not found");
+
+    console.log("sendToTheServer", data);
 
     const response = await fetch(createOrderUrl, {
       method: "POST",
