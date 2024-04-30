@@ -1488,7 +1488,7 @@ menu.state("mamaFuaAcademy", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "5",
+      service: "academy",
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
 
@@ -1513,8 +1513,8 @@ menu.state("bookTraining.name", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "5",
-      serviceType: "1",
+      service: "academy",
+      type: "booktraining",
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
     menu.con("Enter your name" + "\n0. Back");
@@ -1575,7 +1575,7 @@ menu.state("bookTraining.idNumber", {
       menu.end("Session expired. Please start again.");
     }
     const d = await getSessionAsJson(menu.args.sessionId);
-    d["moreOnLocation"] = menu.val;
+    d["address"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
     menu.con("Enter your ID number" + "\n0. Back");
   },
@@ -1595,7 +1595,7 @@ menu.state("bookTraining.disclaimer", {
     d["idNumber"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
     menu.con(
-      "Fee between 2500-5000.Please pay deposit of Kshs.1000." +
+      "Fee between 2500-5000.You may pay deposit of Kshs.1000." +
         "\n If yes press (1) to proceed, press (2) to cancel (0) to go back" +
         "\n1. Yes" +
         "\n2. No" +
@@ -1638,8 +1638,8 @@ menu.state("sponsor.name", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "5",
-      serviceType: "2",
+      service: "academy",
+      type: "sponsor",
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
     menu.con("Enter your name or Organization" + "\n0. Back");
@@ -1656,7 +1656,7 @@ menu.state("sponsor.location", {
       menu.end("Session expired. Please start again.");
     }
     const d = await getSessionAsJson(menu.args.sessionId);
-    d["sponsorName"] = menu.val;
+    d["name"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
     menu.con(
       "Pick your location" +
@@ -1682,7 +1682,7 @@ menu.state("sponsor.moreOnLocation", {
       menu.end("Session expired. Please start again.");
     }
     const d = await getSessionAsJson(menu.args.sessionId);
-    d["sponsorLocation"] = menu.val;
+    d["location"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
 
     menu.con("Enter more on your location" + "\n 0. Back");
@@ -1699,7 +1699,7 @@ menu.state("sponsor.disclaimer", {
       menu.end("Session expired. Please start again.");
     }
     const d = await getSessionAsJson(menu.args.sessionId);
-    d["sponsorMoreOnLocation"] = menu.val;
+    d["address"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
     menu.con(
       "The total fee is 2500, but you can contribute any amount" +
@@ -1746,7 +1746,7 @@ menu.state("mamakaziChama", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "6",
+      service: "chama",
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
 
@@ -1772,8 +1772,8 @@ menu.state("mamakaziChama.register", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "6",
-      serviceType: "1",
+      service: "chama",
+      type: "register",
     };
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
@@ -1836,7 +1836,7 @@ menu.state("mamakaziChama.register.idNumber", {
       menu.end("Session expired. Please start again.");
     }
     const d = await getSessionAsJson(menu.args.sessionId);
-    d["moreOnLocation"] = menu.val;
+    d["address"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
     menu.con("Enter your ID number" + "\n0. Back");
   },
@@ -1899,8 +1899,8 @@ menu.state("mamakaziChama.merryGoRound", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "6",
-      serviceType: "2",
+      service: "chama",
+      type: "merry",
     };
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
@@ -1966,7 +1966,7 @@ menu.state("mamakaziChama.merryGoRound.idNumber", {
     }
 
     const d = await getSessionAsJson(menu.args.sessionId);
-    d["moreOnLocation"] = menu.val;
+    d["address"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
     menu.con("Enter your ID number" + "\n0. Back");
   },
@@ -1995,6 +1995,14 @@ menu.state("mamakaziChama.merryGoRound.amount", {
 
 menu.state("mamakaziChama.merryGoRound.end", {
   run: async () => {
+    if (!(await checkIfSessionExists(menu.args.sessionId))) {
+      menu.end("Session expired. Please start again.");
+    }
+
+    const d = await getSessionAsJson(menu.args.sessionId);
+    d["amount"] = menu.val;
+    await redis.set(menu.args.sessionId, JSON.stringify(d));
+
     try {
       const res = await sendToTheServer(
         menu.args.sessionId,
@@ -2021,8 +2029,8 @@ menu.state("mamakaziChama.assetChama", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "6",
-      serviceType: "3",
+      service: "chama",
+      type: "asset",
     };
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
@@ -2088,7 +2096,7 @@ menu.state("mamakaziChama.assetChama.idNumber", {
     }
 
     const d = await getSessionAsJson(menu.args.sessionId);
-    d["moreOnLocation"] = menu.val;
+    d["address"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
     menu.con("Enter your ID number" + "\n0. Back");
   },
@@ -2144,7 +2152,7 @@ menu.state("monthlyMamaFua", {
       menu.end("Session expired. Please start again.");
     }
     let newData = {
-      service: "7",
+      service: "monthlymamafua",
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
 
@@ -2173,9 +2181,11 @@ menu.state("monthlyMamaFua.name", {
     if (!(await checkIfSessionExists(menu.args.sessionId))) {
       menu.end("Session expired. Please start again.");
     }
+
     let newData = {
-      service: "7",
-      serviceType: "1",
+      service: "monthlymamafua",
+      serviceType: "monthly",
+      frequency: menu.val,
     };
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
     menu.con("Enter your Full Name" + "\n0. Back");
@@ -2235,7 +2245,7 @@ menu.state("monthlyMamaFua.date", {
       menu.end("Session expired. Please start again.");
     }
     const d = await getSessionAsJson(menu.args.sessionId);
-    d["moreOnLocation"] = menu.val;
+    d["address"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
     menu.con("Enter date" + "\n format: DD/MM/YYYY" + "\n 0. Back");
   },
