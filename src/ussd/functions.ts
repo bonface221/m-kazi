@@ -34,7 +34,20 @@ export async function sendToTheServer(sessionId: string, phoneNumber: string) {
       }),
     });
 
-    const responseData = await response.json();
+    const contentType = response.headers.get("content-type");
+
+    if (!contentType || !contentType.includes("application/json")) {
+      return {
+        message:
+          "An error occurred while processing your request. Please try again later.",
+        success: false,
+      };
+    }
+
+    const responseData: {
+      success: boolean;
+      message: string;
+    } = await response.json();
 
     return responseData;
   } catch (error) {
