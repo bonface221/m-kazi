@@ -2,6 +2,7 @@
   "name": "mamakazi-js",
   "packageManager": "yarn@4.0.2",
   "scripts": {
+    "dev": "ts-node-dev --respawn src/index.ts",
     "start": "ts-node src/index.ts",
     "build": "tsc",
     "serve": "node dist/index.js"
@@ -9,13 +10,14 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mongoose": "^8.2.4",
+    "ioredis": "^5.3.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3",
-    "ussd-builder": "^1.2.5"
+    "ussd-menu-builder": "^1.2.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
-    "@types/node": "^20.12.2"
+    "@types/node": "^20.12.7",
+    "ts-node-dev": "^2.0.0"
   }
 }

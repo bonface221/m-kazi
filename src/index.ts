@@ -1,20 +1,15 @@
 import express, { Request, Response } from "express";
-import mongoose from "mongoose";
 import menu from "./ussd";
+import Redis from "ioredis";
 
 require("dotenv").config();
-
-const mongoString = process.env.DATABASE_URL!;
-mongoose.connect(mongoString);
-const db = mongoose.connection;
-db.on("error", (error) => console.error(error));
-db.once("connected", () => {
-  console.log("Connected to database");
-});
+const REDIS_URL = process.env.REDIS_URL!;
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+export const redis = new Redis(6379, REDIS_URL);
 
 const port = process.env.PORT || 3000;
 
@@ -25,6 +20,7 @@ app.get("/", (req: Request, res: Response) => {
 //registering USSD handler with express
 app.post("/ussd", (req: Request, res: Response) => {
   //ussd logic here
+
   menu.run(req.body, (ussdResult: string) => {
     res.send(ussdResult);
   });

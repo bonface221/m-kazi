@@ -1,0 +1,14 @@
+version: "3"
+services:
+  web:
+    ports:
+      - "3030:3000"
+    build: .
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - SERVER_URL=https://mamafua-backend.vercel.app/api/create-order
+
+  redis:
+    image: "redis:7-alpine"
