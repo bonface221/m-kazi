@@ -1667,61 +1667,17 @@ menu.state("sponsor.name", {
     menu.con("Enter your name or Organization" + "\n0. Back");
   },
   next: {
-    "*[a-zA-Z]+": "sponsor.location",
-    "0": "mamaFuaAcademy",
-  },
-});
-
-menu.state("sponsor.location", {
-  run: async () => {
-    if (!(await checkIfSessionExists(menu.args.sessionId))) {
-      menu.end("Session expired. Please start again.");
-    }
-    const d = await getSessionAsJson(menu.args.sessionId);
-    d["name"] = menu.val;
-    await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con(
-      "Pick your location" +
-        "\n 1. Nairobi" +
-        "\n 2. Mombasa" +
-        "\n 3. Kisumu" +
-        "\n 4. Eldoret" +
-        "\n 0. Back"
-    );
-  },
-  next: {
-    "1": "sponsor.moreOnLocation",
-    "2": "sponsor.moreOnLocation",
-    "3": "sponsor.moreOnLocation",
-    "4": "sponsor.moreOnLocation",
-    "0": "mamaFuaAcademy",
-  },
-});
-
-menu.state("sponsor.moreOnLocation", {
-  run: async () => {
-    if (!(await checkIfSessionExists(menu.args.sessionId))) {
-      menu.end("Session expired. Please start again.");
-    }
-    const d = await getSessionAsJson(menu.args.sessionId);
-    d["location"] = menu.val;
-    await redis.set(menu.args.sessionId, JSON.stringify(d));
-
-    menu.con("Enter more on your location" + "\n 0. Back");
-  },
-  next: {
     "*[a-zA-Z]+": "sponsor.disclaimer",
-    "0": "sponsor.location",
+    "0": "mamaFuaAcademy",
   },
 });
-
 menu.state("sponsor.disclaimer", {
   run: async () => {
     if (!(await checkIfSessionExists(menu.args.sessionId))) {
       menu.end("Session expired. Please start again.");
     }
     const d = await getSessionAsJson(menu.args.sessionId);
-    d["address"] = menu.val;
+    d["name"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
     menu.con(
       "The total fee is 2500, but you can contribute any amount" +
