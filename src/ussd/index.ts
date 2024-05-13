@@ -13,16 +13,28 @@ let menu = new UssdMenu({
 
 //common message
 let finalMessage =
-  "Your order is successfully completed!" +
-  "\nService Provider(s) will contact you shortly." +
-  "\nWelcome to MAMAKAZI FAMILY!";
+  "Order successfully placed. " +
+  "\n Our service provider(s) will contact you shortly." +
+  "\n Welcome to THE MAMA KAZI  FAMILY!";
 
 // date regex dd-mm-yyyy
-let dateRegex = "*^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/(19|20)\\d{2}$";
-let timeRegex = "*^(?:[01]\\d|2[0-3]):[0-5]\\d$";
-let moreOnLocationRegex = "*[a-zA-Z0-9]+";
-let nameRegex = "*^[a-zA-Z ]{1,32}$";
+let dateRegex = "*^[a-zA-Z0-9/-:~s]+$";
+let timeRegex = "*^[a-zA-Z0-9/-:~s]+$";
+let moreOnLocationRegex = "*^[a-zA-Z0-9/-:~s]+$";
+let nameRegex = "*^[a-zA-Z0-9/-:~s]+$";
 let bothSinksAndWashroomsRegex = "*^\\d{1,3}(,\\d{1,3})$";
+
+let state1Text =
+  "Welcome to MAMA FUA APP." +
+  "\n www.mamafua.ke" +
+  "\n1. Laundry" +
+  "\n2. House Cleaning" +
+  "\n3. Elite Cleaners" +
+  "\n4. Fumigation" +
+  "\n5. Mama Fua Academy" +
+  "\n6. Monthly MAMAFUA" +
+  "\n7. Mama Kazi Chama" +
+  "\n00. Exit";
 
 // Define menu states
 menu.startState({
@@ -33,18 +45,7 @@ menu.startState({
     }
 
     // use menu.con() to send response without terminating the session
-    menu.con(
-      "Welcome to MAMA KAZI APP" +
-        "\n Your quality home-care partner; 0706291676" +
-        "\n1. Laundry" +
-        "\n2. House Cleaning" +
-        "\n3. Elite Cleaners" +
-        "\n4. Fumigation" +
-        "\n5. Mama Fua Academy" +
-        "\n6. Monthly MAMAFUA" +
-        "\n7. Mama Kazi Chama" +
-        "\n00. Exit"
-    );
+    menu.con(state1Text);
   },
 
   // next object links to next state based on user input
@@ -58,6 +59,7 @@ menu.startState({
     "7": "mamakaziChama",
     "00": "quit",
   },
+  defaultNext: "invalidOption",
 });
 
 // start of laundry services
@@ -73,9 +75,7 @@ menu.state("laundry", {
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
 
-    menu.con(
-      "Welcome to Laundry Services" + "\n1. Home-Wash" + "\n2. Laundromat"
-    );
+    menu.con("1.Home-Wash" + "\n2. Laundromat");
   },
   next: {
     "1": "homeWash",
@@ -98,11 +98,7 @@ menu.state("homeWash", {
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
 
-    menu.con(
-      "Welcome to Home Wash Services" +
-        "\n Enter number of baskets" +
-        "\n 0. Back"
-    );
+    menu.con("Enter number of baskets" + "\n 0. Back");
   },
   next: {
     "*\\d+": "homeWash.location",
@@ -171,9 +167,7 @@ menu.state("homeWash.name", {
     d["address"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con(
-      "Enter your name" + "\n format: firstname lastname" + "\n 0. Back"
-    );
+    menu.con("Enter your name" + "\n 0. Back");
   },
   next: {
     [nameRegex]: "homeWash.date",
@@ -276,8 +270,7 @@ menu.state("laundromat", {
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
 
     menu.con(
-      "Welcome to Laundromat Services" +
-        "\n Pick your location" +
+      "Pick your location" +
         "\n 1. Nairobi" +
         "\n 2. Mombasa" +
         "\n 3. Kisumu" +
@@ -325,9 +318,7 @@ menu.state("laundromat.name", {
     d["address"] = menu.val;
 
     await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con(
-      "Enter Your name" + "\n format: firstname lastname" + "\n 0. Back"
-    );
+    menu.con("Enter Your name" + "\n 0. Back");
   },
   next: {
     [nameRegex]: "laundromat.date",
@@ -495,7 +486,7 @@ menu.state("houseCleaning.location", {
     menu.con("Enter More on your location" + "\n 00. Back");
   },
   next: {
-    "*[a-zA-Z]+": "houseCleaning.moreOnLocation",
+    [moreOnLocationRegex]: "houseCleaning.moreOnLocation",
     "00": "__start__",
   },
 });
@@ -690,7 +681,7 @@ menu.state("eliteCleaners.deepHouseCleaning.moreOnLocation", {
     menu.con("Enter more on your location" + "\n 0. Back");
   },
   next: {
-    "*[a-zA-Z]+": "eliteCleaners.deepHousingCleaning.date",
+    [moreOnLocationRegex]: "eliteCleaners.deepHousingCleaning.date",
     "0": "eliteCleaners",
   },
 });
@@ -709,7 +700,7 @@ menu.state("eliteCleaners.deepHousingCleaning.date", {
     menu.con("Enter date" + "\n format: DD/MM/YYYY" + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.deepHousingCleaning.time",
+    [dateRegex]: "eliteCleaners.deepHousingCleaning.time",
     "0": "eliteCleaners",
   },
 });
@@ -728,7 +719,7 @@ menu.state("eliteCleaners.deepHousingCleaning.time", {
     menu.con("Enter time" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.deepHousingCleaning.end",
+    [timeRegex]: "eliteCleaners.deepHousingCleaning.end",
     "0": "eliteCleaners",
   },
 });
@@ -753,7 +744,13 @@ menu.state("eliteCleaners.deepHousingCleaning.end", {
 
       console.log(res);
 
-      menu.end(finalMessage);
+      if (res.success) {
+        menu.end(finalMessage);
+      } else {
+        menu.end(
+          "An error occured when processing your request. Please try again later."
+        );
+      }
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -776,7 +773,7 @@ menu.state("eliteCleaners.seatCleaning", {
 
     await redis.set(menu.args.sessionId, JSON.stringify(newData));
 
-    menu.con("Seat cleaning services" + "\n No of seats " + "\n 0. Back");
+    menu.con("Enter No of seats " + "\n 0. Back");
   },
   next: {
     "*\\d+": "eliteCleaners.seatCleaning:noOfSeats",
@@ -829,7 +826,7 @@ menu.state("eliteCleaners.seatCleaning.moreOnLocation", {
     menu.con("Enter more on your location" + "\n 0. Back");
   },
   next: {
-    "*[a-zA-Z]+": "eliteCleaners.seatCleaning.date",
+    [moreOnLocationRegex]: "eliteCleaners.seatCleaning.date",
     "0": "eliteCleaners",
   },
 });
@@ -848,7 +845,7 @@ menu.state("eliteCleaners.seatCleaning.date", {
     menu.con("Enter date" + "\n format: DD/MM/YYYY" + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.seatCleaning.time",
+    [dateRegex]: "eliteCleaners.seatCleaning.time",
     "0": "eliteCleaners",
   },
 });
@@ -867,7 +864,7 @@ menu.state("eliteCleaners.seatCleaning.time", {
     menu.con("Enter time" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.seatCleaning.end",
+    [timeRegex]: "eliteCleaners.seatCleaning.end",
     "0": "eliteCleaners",
   },
 });
@@ -892,7 +889,13 @@ menu.state("eliteCleaners.seatCleaning.end", {
 
       console.log(res);
 
-      menu.end(finalMessage);
+      if (res.success) {
+        menu.end(finalMessage);
+      } else {
+        menu.end(
+          "An error occured when processing your request. Please try again later."
+        );
+      }
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -992,7 +995,7 @@ menu.state("eliteCleaners.carpetCleaning.date", {
     menu.con("Enter date" + "\n format: DD/MM/YYYY" + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.carpetCleaning.time",
+    [dateRegex]: "eliteCleaners.carpetCleaning.time",
     "0": "eliteCleaners",
   },
 });
@@ -1011,7 +1014,7 @@ menu.state("eliteCleaners.carpetCleaning.time", {
     menu.con("Enter time" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.carpetCleaning.end",
+    [timeRegex]: "eliteCleaners.carpetCleaning.end",
     "0": "eliteCleaners",
   },
 });
@@ -1036,9 +1039,13 @@ menu.state("eliteCleaners.carpetCleaning.end", {
 
       console.log(res);
 
-      menu.end(
-        "Awesome. We will send you a confirmation message shortly. Thank you!"
-      );
+      if (res.success) {
+        menu.end(finalMessage);
+      } else {
+        menu.end(
+          "An error occured when processing your request. Please try again later."
+        );
+      }
     } catch {
       menu.end(finalMessage);
     }
@@ -1250,7 +1257,7 @@ menu.state("eliteCleaners.sinkAndWashrooms.moreOnLocation", {
     menu.con("Enter more on your location" + "\n 0. Back");
   },
   next: {
-    "*[a-zA-Z]+": "eliteCleaners.sinkAndWashrooms.date",
+    [moreOnLocationRegex]: "eliteCleaners.sinkAndWashrooms.date",
     "0": "eliteCleaners",
   },
 });
@@ -1269,7 +1276,7 @@ menu.state("eliteCleaners.sinkAndWashrooms.date", {
     menu.con("Enter date" + "\n format: DD/MM/YYYY" + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.sinkAndWashrooms.time",
+    [dateRegex]: "eliteCleaners.sinkAndWashrooms.time",
     "0": "eliteCleaners.sinkAndWashrooms",
   },
 });
@@ -1287,7 +1294,7 @@ menu.state("eliteCleaners.sinkAndWashrooms.time", {
     menu.con("Enter time" + "\n format: hh:mm" + "\n 0. Back");
   },
   next: {
-    "*\\d+": "eliteCleaners.sinkAndWashrooms.end",
+    [timeRegex]: "eliteCleaners.sinkAndWashrooms.end",
     "0": "eliteCleaners.sinkAndWashrooms",
   },
 });
@@ -1311,7 +1318,13 @@ menu.state("eliteCleaners.sinkAndWashrooms.end", {
 
       console.log(res);
 
-      menu.end(finalMessage);
+      if (res.success) {
+        menu.end(finalMessage);
+      } else {
+        menu.end(
+          "An error occured when processing your request. Please try again later."
+        );
+      }
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -1472,7 +1485,13 @@ menu.state("fumigation.end", {
 
       console.log(res);
 
-      menu.end(finalMessage);
+      if (res.success) {
+        menu.end(finalMessage);
+      } else {
+        menu.end(
+          "An error occured when processing your request. Please try again later."
+        );
+      }
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -1619,10 +1638,13 @@ menu.state("bookTraining.end", {
 
       console.log(res);
 
-      menu.end(
-        "Registration is complete and received." +
-          "Mama Kazi Team will provide payment shortly. Thank you!"
-      );
+      if (res.success) {
+        menu.end(finalMessage);
+      } else {
+        menu.end(
+          "An error occured when processing your request. Please try again later."
+        );
+      }
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -1645,61 +1667,17 @@ menu.state("sponsor.name", {
     menu.con("Enter your name or Organization" + "\n0. Back");
   },
   next: {
-    "*[a-zA-Z]+": "sponsor.location",
-    "0": "mamaFuaAcademy",
-  },
-});
-
-menu.state("sponsor.location", {
-  run: async () => {
-    if (!(await checkIfSessionExists(menu.args.sessionId))) {
-      menu.end("Session expired. Please start again.");
-    }
-    const d = await getSessionAsJson(menu.args.sessionId);
-    d["name"] = menu.val;
-    await redis.set(menu.args.sessionId, JSON.stringify(d));
-    menu.con(
-      "Pick your location" +
-        "\n 1. Nairobi" +
-        "\n 2. Mombasa" +
-        "\n 3. Kisumu" +
-        "\n 4. Eldoret" +
-        "\n 0. Back"
-    );
-  },
-  next: {
-    "1": "sponsor.moreOnLocation",
-    "2": "sponsor.moreOnLocation",
-    "3": "sponsor.moreOnLocation",
-    "4": "sponsor.moreOnLocation",
-    "0": "mamaFuaAcademy",
-  },
-});
-
-menu.state("sponsor.moreOnLocation", {
-  run: async () => {
-    if (!(await checkIfSessionExists(menu.args.sessionId))) {
-      menu.end("Session expired. Please start again.");
-    }
-    const d = await getSessionAsJson(menu.args.sessionId);
-    d["location"] = menu.val;
-    await redis.set(menu.args.sessionId, JSON.stringify(d));
-
-    menu.con("Enter more on your location" + "\n 0. Back");
-  },
-  next: {
     "*[a-zA-Z]+": "sponsor.disclaimer",
-    "0": "sponsor.location",
+    "0": "mamaFuaAcademy",
   },
 });
-
 menu.state("sponsor.disclaimer", {
   run: async () => {
     if (!(await checkIfSessionExists(menu.args.sessionId))) {
       menu.end("Session expired. Please start again.");
     }
     const d = await getSessionAsJson(menu.args.sessionId);
-    d["address"] = menu.val;
+    d["name"] = menu.val;
     await redis.set(menu.args.sessionId, JSON.stringify(d));
     menu.con(
       "The total fee is 2500, but you can contribute any amount" +
@@ -1727,11 +1705,17 @@ menu.state("sponsor.end", {
 
       console.log(res);
 
-      menu.end(
-        "Dignifying the next generation of women, all thanks to you." +
-          "\n MAMA KAZI TEAM will be communicating the payment details shortly." +
-          "\n Thank you!"
-      );
+      if (res.success) {
+        menu.end(
+          "Dignifying the next generation of women, all thanks to you." +
+            "\n MAMA KAZI TEAM will be communicating the payment details shortly." +
+            "\n Thank you!"
+        );
+      } else {
+        menu.end(
+          "An error occured when processing your request. Please try again later."
+        );
+      }
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -1880,11 +1864,16 @@ menu.state("mamakaziChama.register.end", {
       );
 
       console.log(res);
-
-      menu.end(
-        "Registration is successfully completed," +
-          "\n Mama Kazi Team will reach out at the earliest convenience."
-      );
+      if (res.success) {
+        menu.end(
+          "Registration is successfully completed," +
+            "\n Mama Kazi Team will reach out at the earliest convenience."
+        );
+      } else {
+        menu.end(
+          "An error occured when processing your request. Please try again later."
+        );
+      }
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -2011,10 +2000,16 @@ menu.state("mamakaziChama.merryGoRound.end", {
 
       console.log(res);
 
-      menu.end(
-        "Your request has successfully been received," +
-          "Mama Kazi Team will reach out at the earliest convenience."
-      );
+      if (res.success) {
+        menu.end(
+          "Your request has successfully been received," +
+            "Mama Kazi Team will reach out at the earliest convenience."
+        );
+      } else {
+        menu.end(
+          "An error occured when processing your request. Please try again later."
+        );
+      }
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -2134,10 +2129,16 @@ menu.state("mamakaziChama.assetChama.end", {
 
       console.log(res);
 
-      menu.end(
-        "Your request has successfully been received," +
-          "\nMama Kazi Team will reach out at the earliest convenience."
-      );
+      if (res.success) {
+        menu.end(
+          "Your request has successfully been received," +
+            "\nMama Kazi Team will reach out at the earliest convenience."
+        );
+      } else {
+        menu.end(
+          "An error occured when processing your request. Please try again later."
+        );
+      }
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
@@ -2290,7 +2291,13 @@ menu.state("monthlyMamaFua.end", {
 
       console.log(res);
 
-      menu.end(finalMessage);
+      if (res.success) {
+        menu.end(finalMessage);
+      } else {
+        menu.end(
+          "An error occured when processing your request. Please try again later."
+        );
+      }
     } catch {
       menu.end(
         "An error occured when processing your request. Please try again later."
