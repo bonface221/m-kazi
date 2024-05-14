@@ -17,11 +17,13 @@ let finalMessage =
   "\n Our service provider(s) will contact you shortly." +
   "\n Welcome to THE MAMA KAZI  FAMILY!";
 
+let commonRE = "*^[a-zA-Z0-9/-:~\\s]+$";
+
 // date regex dd-mm-yyyy
-let dateRegex = "*^[a-zA-Z0-9/-:~s]+$";
-let timeRegex = "*^[a-zA-Z0-9/-:~s]+$";
-let moreOnLocationRegex = "*^[a-zA-Z0-9/-:~s]+$";
-let nameRegex = "*^[a-zA-Z0-9/-:~s]+$";
+let dateRegex = commonRE;
+let timeRegex = commonRE;
+let moreOnLocationRegex = commonRE;
+let nameRegex = commonRE;
 let bothSinksAndWashroomsRegex = "*^\\d{1,3}(,\\d{1,3})$";
 
 let state1Text =
