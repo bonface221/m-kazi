@@ -4,6 +4,7 @@ services:
     ports:
       - "3030:3000"
     build: .
+    restart: always
     depends_on:
       - redis
     environment:
@@ -12,3 +13,4 @@ services:
 
   redis:
     image: "redis:7-alpine"
+    restart: always
