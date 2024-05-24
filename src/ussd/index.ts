@@ -305,7 +305,7 @@ menu.state("laundromat.moreOnLocation", {
   },
   next: {
     [moreOnLocationRegex]: "laundromat.name",
-    "0": "laundromat.location",
+    "0": "laundromat",
   },
 });
 
